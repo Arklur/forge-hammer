@@ -416,13 +416,11 @@ let CityMap = {
 			yOffset = 500;
 		else if (FH.ActiveMap === "cultural_outpost") 
 			xOffset = 500;
+		else if (FH.ActiveMap === "stellar_city") 
+			yOffset = 1000;
 		else if (FH.ActiveMap === "guild_raids") {
 			xOffset = 500;
 			yOffset = 500;
-		}
-		else if (FH.ActiveMap === "stellar_city") {
-			console.log(CityMap.stellar_city.data);
-			yOffset = 1000;
 		}
 
 		for (let b in buildings) {

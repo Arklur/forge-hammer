@@ -121,7 +121,7 @@ a[target="_blank"] svg {
 }
 
 .dropdown ul li:hover{
-	background-color: var(--bg-medium);
+	background-color: var(--table-bg-hover);
 	color: var(--text-dark);
 }
 
@@ -138,6 +138,35 @@ a[target="_blank"] svg {
 .dropdown input[type=checkbox]:checked ~ span.arrow {
 	transform: rotate(45deg);
 	-webkit-transform: rotate(45deg);
+}
+
+.slidedown {
+	overflow: hidden;
+	height: inherit;
+	display: flex;
+    flex-direction: column;
+	align-self: start;
+	text-align: left;
+}
+
+.slidedown:hover {
+	height: auto;
+}
+
+.barItem .slidedown {
+	position: relative;
+	top: 3px;
+}
+.barItem .slidedown li:hover {
+	text-decoration: underline;
+}
+
+.barItem .slidedown:hover li {
+	background: var(--game-bg-dark);
+	width: 100%;
+}
+.barItem .slidedown li:last-child {
+	border-radius: 0 0 4px 4px;
 }
 
 
@@ -1173,6 +1202,7 @@ hammerBar */
 	padding: 0 4px;
 	height: inherit;
 	gap: 2px;
+	position: relative;
 }
 #hammerBar img.barItem {
 	height: inherit;
@@ -1180,7 +1210,7 @@ hammerBar */
 #hammerBar .barItem img {
 	max-height: 25px;
 }
-#hammerBar .barItem.active {
+#hammerBar .barItem.active, #hammerBar .barItem .active {
 	color: var(--golden);
 }
 
