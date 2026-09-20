@@ -1744,7 +1744,7 @@ let Main = {
 				else 
 				 	list[ally.mapEntityId] = {[ally.id]:ally.id}
 			} else {
-				mapID=Main.Allies.allyList[ally.id]?.mapEntityId
+				let mapID = Main.Allies.allyList[ally.id]?.mapEntityId
 				if (mapID) {
 					delete Main.Allies.buildingList[mapID][ally.id]
 					if (Object.keys(Main.Allies.buildingList[mapID]).length==0) delete Main.Allies.buildingList[mapID]
@@ -1761,7 +1761,7 @@ let Main = {
 
 		setMeta:(raw)=>{
 			let meta = Main.Allies.meta = {} 
-			for (ally of raw) {
+			for (let ally of raw) {
 				meta[ally.id]=ally
 			}
 		},
@@ -1897,7 +1897,7 @@ let Main = {
 				unassigned++
 			})
 
-			html=`<div class="dark-bg p5">
+			let html=`<div class="dark-bg p5">
 				<select id="AllyFilter"><option value="">${FH.t('Boxes.AllyList.All')}</option>`
 				for (let r of Object.values(Main.Allies.rarities)) {
 					html+=`<option value="${r.id.value}">${r.name}</option>`
@@ -2014,7 +2014,7 @@ let Main = {
 				"guild_raids":"_gr"
 			}
 			let ret=""
-			for (b of boosts||[]) {
+			for (let b of boosts||[]) {
 				ret+=`<span class="${b.targetedFeature}">${srcLinks.icons(b.type+feature[b.targetedFeature])} ${b.value + Boosts.percent(b.type)}</span>`
 			}
 			return ret
@@ -2022,7 +2022,7 @@ let Main = {
 
 		boostsArray: (boosts) => {
 			let ret = [];
-			for (b of boosts||[]) {
+			for (let b of boosts||[]) {
 				let combinedBoosts = Boosts.Mapper[b.type];
 				if (combinedBoosts) {
 					for (let type of combinedBoosts) {

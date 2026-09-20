@@ -150,6 +150,10 @@ let CityMap = {
 
 
 	checkOutpostBuildings: () => {
+		if (FH.ActiveMap !== "cultural_outpost") {
+			$('#alertcountdown').remove();
+			return;
+		}
 
 		function filterByTransitionTime(items, thresholdSeconds = 300) {
 			let sorted = [...items].sort(
@@ -455,7 +459,7 @@ let CityMap = {
 			$('#map-buildings').append( f );
 		}
 
-		$('[data-original-title]').tooltip({
+		$('#citymap-wrapper [data-original-title]').tooltip({
 			container: 'body',
 			html: true,
 		});
@@ -1013,7 +1017,7 @@ let CityMap = {
 		});
 		CityMap.getAreas();
 		
-		$('[data-original-title]').tooltip({
+		$('#grid-outer [data-original-title]').tooltip({
 			container: 'body',
 			html: true,
 		});
@@ -2104,7 +2108,7 @@ let CityBuildings = {
 						let resources = {[reward.subType]: reward.amount} 
 						if (reward.id.search("#") !== -1) { // "goods#random#CurrentEra#30" "goods#random#PreviousEra#15"
 							let amount = reward.id.match(/\d+$/)[0]
-							if (reward.id.search("goods") !== -1 && reward.id.search("FH.CurrentEra") !== -1)
+							if (reward.id.search("goods") !== -1 && reward.id.search(FH.CurrentEra) !== -1)
 								resources = { 'random_good_of_age': amount }
 							else if (reward.id.search("goods") !== -1 && reward.id.search("PreviousEra") !== -1)
 								resources = { 'random_good_of_previous_age': amount }
@@ -2773,12 +2777,18 @@ let CityBuildings = {
 
 
 	getBuildingById(id) {
-		return Object.values(FH.Main.CityBuildingsData).find(x => x.id === id)
+		return FH.Main.CityBuildingsData[id];
 	},
 
 	
-	getBuildingByCoords(x,y) {	
-		return Object.values(FH.Main.CityBuildingsData).find(b => b.coords.x === x && b.coords.y === y)
+	_coordIndex: null,
+	getBuildingByCoords(x, y) {
+		if (!this._coordIndex) {
+			this._coordIndex = new Map();
+			for (const b of Object.values(FH.Main.CityBuildingsData))
+				this._coordIndex.set(b.coords.x + '|' + b.coords.y, b);
+		}
+		return this._coordIndex.get(x + '|' + y);
 	},
 
 
@@ -2970,7 +2980,7 @@ let CityBuildings = {
 
 		for (let building of data) {
 			if (FH.ActiveMap === 'OtherPlayer' && building.eraName !== undefined) continue
-			let metaData = Object.values(FH.Main.CityEntities).find(x => x.id === building.cityentity_id)
+			let metaData = FH.Main.CityEntities[building.cityentity_id];
 			let era = Technologies.getEraName(building.cityentity_id, building.level);
 			let newCityEntity = CityBuildings.createBuilding(metaData, era, building,withAllies);
 
