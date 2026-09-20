@@ -470,6 +470,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		else if (FH.ActiveMap === 'cultural_outpost') {
 			CityMap.CulturalOutpost.data = Object.assign({}, ...data.responseData['entities'].map((x) => ({ [x.id]: x })));
 			CityMap.CulturalOutpost.areas = data.responseData['unlocked_areas'];
+			CityMap.checkOutpostBuildings();
 		}
 	});
 
@@ -482,13 +483,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		FH.LastMapPlayerID = FH.Player.ID;
 
+		if (FH.ActiveMap === 'gg') return; // getEntities wurde in den GG ausgelöst => Map nicht ändern
+		Main.UpdateActiveMap('main');
+
 		Main.CityMapData = Object.assign({}, ...data.responseData.map((x) => ({ [x.id]: x })));
 		Main.CityMapUpdateEvent.trigger();
 		Main.SetArkBonus2();
 
-		if (FH.ActiveMap === 'gg') return; // getEntities wurde in den GG ausgelöst => Map nicht ändern
-		Main.UpdateActiveMap('main');
 		CityMap.OtherPlayer = { mapData: {}, unlockedAreas: null, name: '', eraName: null};
+		CityMap.checkOutpostBuildings();
 	});
 
 
@@ -540,7 +543,8 @@ document.addEventListener("DOMContentLoaded", function () {
 			let building = data.responseData[0];
 			if (building && building.id) {
 				if (FH.ActiveMap === "cultural_outpost") {
-					CityMap.CulturalOutpost.data[building.id] = building
+					CityMap.CulturalOutpost.data[building.id] = building;
+					Main.CityMapUpdateEvent.trigger();
 					return
 				}
 				else if (FH.ActiveMap === "era_outpost") {
@@ -559,6 +563,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			let ID = postData[0].requestData[0];
 			if (FH.ActiveMap === "cultural_outpost") {
 				delete CityMap.CulturalOutpost.data[ID];
+				Main.CityMapUpdateEvent.trigger();
 				return
 			}
 			else if (FH.ActiveMap === "era_outpost") {
@@ -575,7 +580,6 @@ document.addEventListener("DOMContentLoaded", function () {
 					delete Main.CityBuildingsData[ID];
 			}
 		}
-		Main.CityMapUpdateEvent.trigger();
 	});
 
 	// production is started, collected, aborted
@@ -1017,13 +1021,15 @@ let Main = {
 		trigger:()=>{
 			f = ()=>{
 				FH.proxy.triggerCustomHandler('CityMapUpdated');
-				if ($('#bluegalaxy').length > 0) {
-					FH.BlueGalaxy.CalcBody(Buildings);
-				}
-				if ($('#Productions').length > 0) {
+				if ($('#bluegalaxy').length > 0) 
+					FH.BlueGalaxy.CalcBody();
+				
+				if ($('#Productions').length > 0) 
 					Productions.CalcBody();
-				}
+
+				CityMap.checkOutpostBuildings();
 			}
+
 			if (!Main.CityMapUpdateEvent.timeout) {
 				f();
 				Main.CityMapUpdateEvent.timeout = setTimeout(()=>{
@@ -1040,7 +1046,7 @@ let Main = {
 		activateAfterTimeout: false,
 		timeout:null,
 		trigger:()=>{
-			f = ()=>{
+			const f = ()=>{
 				FH.proxy.triggerCustomHandler('InventoryUpdated');
 			}
 			if (!Main.InventoryUpdateEvent.timeout) {

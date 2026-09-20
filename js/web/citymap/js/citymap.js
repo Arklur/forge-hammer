@@ -88,9 +88,7 @@ let CityMap = {
 
 
 	/**
-	 * Initializes the City Map based on the selected map type and user preferences.
-	 * This function handles retrieving map scale, view settings, and map data,
-	 * and manages the creation or update of the City Map UI.
+	 * Initializes the City Map based on the selected map type and user preferences
 	 *
 	 * @param {Object} event - An optional event object passed when triggered. If not provided, it toggles the visibility of the map UI.
 	 */
@@ -146,6 +144,74 @@ let CityMap = {
 		setTimeout(()=>{
 			CityMap.SetMapBuildings(Data);
 		}, 100);
+	},
+
+
+	checkOutpostBuildings: () => {
+
+		function filterByTransitionTime(items, thresholdSeconds = 300) {
+			let sorted = [...items].sort(
+				(a, b) => a.state.next_state_transition_at - b.state.next_state_transition_at
+			);
+
+			let result = [];
+			for (let item of sorted) {
+				let last = result[result.length - 1];
+				if (last && item.state.next_state_transition_at - last.state.next_state_transition_at <= thresholdSeconds) {
+					result[result.length - 1] = item;
+				}
+				else {
+					result.push(item);
+				}
+			}
+			return result;
+		}
+
+		let buildings = Object.values(CityMap.CulturalOutpost.data).filter(x => x.state.next_state_transition_at !== undefined && x.type !== 'main_building' && x.state.pausedAt === undefined);
+		buildings = filterByTransitionTime(buildings);
+
+		FH.Alerts.getAll().then(existingAlerts => {
+			$('#alertcountdown').remove();
+			if (FH.ActiveMap !== "cultural_outpost") return;
+			const alertTitle = FH.t("Boxes.BetterMusic.Settlement");
+			const existingExpires = new Set(
+				(existingAlerts || [])
+					.filter(a => a.data.title === alertTitle)
+					.map(a => a.data.expires)
+			);
+
+			let countdownContainer = $(`<div class="barItem" id="alertcountdown"><img class="clickable" src="${FH.extUrl}images/menu/alerts.png" onclick="FH.Alerts.show()" />
+				<ul class="slidedown simpleList"></ul>
+				</div>`);
+			let countdowns = ``;
+			for (let bldg of buildings) {
+				const expiresMs = bldg.state.next_state_transition_at * 1000;
+				const isActive = existingExpires.has(expiresMs) ? ' active' : '';
+				const title = bldg.state.__class__ === "ProducingState" ? FH.t("Boxes.CityMap."+bldg.type) : FH.t("General.Construction");
+				countdowns += `<li class="countdown ${bldg.state.__class__}${isActive} ${bldg.type}" data-time="${bldg.state.next_state_transition_at}">
+					${moment.unix(bldg.state.next_state_transition_at).format('HH:mm')} ${title}
+				</li>`;
+			}
+			$('ul',countdownContainer).append(countdowns);
+			$('#hammerBar').append(countdownContainer);
+		});
+		
+		$('#hammerBar').off('click.outpostCountdown').on('click.outpostCountdown', '#alertcountdown li', function (e) {
+			if ($(this).hasClass('active')) return;
+
+			FH.Alerts.add({
+				title: FH.t("Boxes.BetterMusic.Settlement"),
+				body: "",
+				expires: $(this).data('time') * 1000,
+				repeat: -1,
+				persistent: true,
+				tag: '',
+				category: 'default',
+				vibrate: false,
+				actions: null
+			});
+			$(this).addClass('active');
+		});
 	},
 
 

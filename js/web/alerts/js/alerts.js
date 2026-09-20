@@ -357,7 +357,6 @@ let Alerts = function(){
 				;
 		},
 		add: (alert) => {
-
 			// reset the next timestamp if the new alert is set to expires before
 			// this can happen if, for example, currently there are no new alerts in the db and tmp.data.next()
 			// has been just called (so that it will not be called again for the duration
@@ -730,13 +729,6 @@ let Alerts = function(){
 							tmp.preferences.set(key, value);
 						});
 
-						// $('#AlertsBody').find('span.check input').on('click', function(){
-						//     let el = $(this);
-						//     let input = el.find('input');
-						//     let id = input.prop
-						//     let checked = $(this).data('action');
-						// });
-
 					});
 
 					tmp.web.body.overlay.permissions.render();
@@ -752,9 +744,7 @@ let Alerts = function(){
 				},
 				tabs: {
 
-					/** @type {string[]} */
 					head: [],
-					/** @type {string[]} */
 					content: [],
 
 					/**
@@ -912,6 +902,7 @@ let Alerts = function(){
 
 						alerts.then(function(alerts){
 							for (let alert of alerts) {
+								//console.log(alert);
 								let persist = ( alert.persistent ) ? ' checked="checked"' : '';
 								html += `<tr id="alert-id-${alert.id}">
 							<td><input type="checkbox"${persist}></td>
@@ -1636,6 +1627,10 @@ let Alerts = function(){
 			return {
 				model: tmp.model,
 			}
+		},
+		
+		add: (alert) => {
+			return tmp.data.add(alert);
 		},
 
 		init: () => {
