@@ -820,7 +820,25 @@ plannerDB.version(1).stores({
 				const region = typeof request.region === 'string' ? request.region : 'unknown';
 				try {
 					if (!buildingMetaDB.isOpen()) await buildingMetaDB.open();
-					const keys = await buildingMetaDB.table('buildingMeta').where('region').equals(region).primaryKeys();
+					const table = buildingMetaDB.table('buildingMeta');
+
+					// read from the hash index only
+					if (request.withHash) {
+						const hashes = {};
+						await buildingMetaDB.transaction('r', table, async () => {
+							const [indexKeys, primaryKeys] = await Promise.all([
+								table.orderBy('hash').keys(),
+								table.orderBy('hash').primaryKeys()
+							]);
+							for (let i = 0; i < primaryKeys.length; i++) {
+								const pk = primaryKeys[i]; // [region, id]
+								if (Array.isArray(pk) && pk[0] === region) hashes[pk[1]] = indexKeys[i];
+							}
+						});
+						return APIsuccess(hashes);
+					}
+
+					const keys = await table.where('region').equals(region).primaryKeys();
 					// primary key is [region+id]
 					return APIsuccess(keys.map(key => Array.isArray(key) ? key[1] : key));
 				} catch (e) {

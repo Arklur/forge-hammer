@@ -526,45 +526,22 @@ document.addEventListener("DOMContentLoaded", function () {
 	// move buildings, use self aid kits
 	FH.proxy.addHandler('CityMapService', (data, postData) => {
 		if (data.requestMethod === 'moveEntity' || data.requestMethod === 'moveEntities' || data.requestMethod === 'updateEntity') {
-			let Buildings = data.responseData;
-
-			if (Buildings[0]?.player_id != FH.Player.ID) return; // opened another players GB
+			if (data.responseData[0]?.player_id != FH.Player.ID) return; // opened another players GB
 			Main.UpdateCityMap(data.responseData);
 		}
 		else if (data.requestMethod === 'placeBuilding') {
 			let building = data.responseData[0];
-			if (building && building.id) {
-				if (FH.ActiveMap === "cultural_outpost") {
-					CityMap.cultural_outpost.data[building.id] = building;
-					Main.CityMapUpdateEvent.trigger();
-					return
-				}
-				else if (FH.ActiveMap === "era_outpost") {
-					CityMap.era_outpost.data[building.id] = building
-					return
-				}
-				else if (FH.ActiveMap === "guild_raids") {
-					CityMap.guild_raids.data[building.id] = building
-					return
-				}
+			if (!building?.id) return;
 
+			if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "guild_raids" || FH.ActiveMap === "stellar_city") 
+				CityMap[FH.ActiveMap].data[building.id] = building;
+			else
 				Main.CityMapData[building.id] = building;
-			}
 		}
 		else if (data.requestMethod === 'removeBuilding') {
 			let ID = postData[0].requestData[0];
-			if (FH.ActiveMap === "cultural_outpost") {
-				delete CityMap.cultural_outpost.data[ID];
-				Main.CityMapUpdateEvent.trigger();
-				return
-			}
-			else if (FH.ActiveMap === "era_outpost") {
-				delete CityMap.era_outpost.data[ID];
-				return
-			}
-			else if (FH.ActiveMap === "guild_raids") {
-				delete CityMap.guild_raids.data[ID];
-				return
+			if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "guild_raids" || FH.ActiveMap === "stellar_city") {
+				delete CityMap[FH.ActiveMap].data[ID];
 			}
 			if (ID && Main.CityMapData[ID]) {
 				delete Main.CityMapData[ID];
@@ -572,6 +549,8 @@ document.addEventListener("DOMContentLoaded", function () {
 					delete Main.CityBuildingsData[ID];
 			}
 		}
+		else return;
+		Main.CityMapUpdateEvent.trigger();
 	});
 
 	// production is started, collected, aborted
@@ -1011,7 +990,7 @@ let Main = {
 		activateAfterTimeout: false,
 		timeout: null,
 		trigger:()=>{
-			f = ()=>{
+			const f = ()=>{
 				FH.proxy.triggerCustomHandler('CityMapUpdated');
 				if ($('#bluegalaxy').length > 0) 
 					FH.BlueGalaxy.CalcBody();
@@ -1112,6 +1091,7 @@ let Main = {
 		let Metadata = {};   // parsed metadata, used in the game
 		const rawMeta = {};  // { hash, json } per id, to fill the extension DB for the planner
 		const failed = [];   // ids that could not be loaded
+		const fetchedIds = []; // ids downloaded from the CDN in this run
 
 		const urlIds = Object.keys(buildingUrls);
 		const maxConcurrent = 10; // z.B. 10 gleichzeitige Requests
@@ -1144,6 +1124,7 @@ let Main = {
 				toFetch.push(id);
 			}
 		}
+		buildingsOld = null; // not needed anymore, don't keep it alive during the downloads
 
 		const missingCount = toFetch.length;
 		const showWarning = missingCount > 100;
@@ -1197,6 +1178,7 @@ let Main = {
 					if (xhr.status === 200) {
 						if (accept(id, meta.hash, xhr.responseText)) {
 							if (finish()) return;
+							fetchedIds.push(id);
 							// only cache what parsed, so the cache cannot go stale-and-broken
 							Promise.resolve(IndexDB.db.buildingMeta.put({ id: id, hash: meta.hash, json: xhr.responseText }))
 								.catch(e => console.warn('Forge Hammer [meta]: could not cache', id, e));
@@ -1295,25 +1277,46 @@ let Main = {
 			return unsent;
 		}
 
-		async function updateBackgroundDB() {
-			const ids = Object.keys(rawMeta);
-			let unsent = await sendAll(ids);
-
-			// local cache marks an entry as done as soon as its hash matches
-			let stored = null;
+		/**
+		 * @returns {Promise<Object<string, string>|null>} id => hash of the entries the background DB holds for this region, null if unknown
+		 */
+		async function getStoredHashes() {
 			try {
-				stored = await Main.sendExtMessage({
+				const stored = await Main.sendExtMessage({
 					type: 'buildingMetaIds',
 					region: region,
+					withHash: true,
 					timeout: 15000,
 				});
+				return (stored && typeof stored === 'object' && !Array.isArray(stored)) ? stored : null;
 			} catch (error) {
-				stored = null;
+				return null;
+			}
+		}
+
+		/**
+		 * Sends only entries the background DB is missing or holds with another hash.
+		 * Previously every cached entry was sent on each page load.
+		 */
+		async function updateBackgroundDB() {
+			const stored = await getStoredHashes();
+
+			// background not reachable/answering: at least send what was downloaded in this run
+			const ids = stored
+				? Object.keys(rawMeta).filter(id => stored[id] !== rawMeta[id].hash)
+				: fetchedIds.filter(id => rawMeta[id]);
+
+			if (!ids.length) {
+				console.debug(`Forge Hammer [meta]: planner DB for region "${region}" is up to date`);
+				return;
 			}
 
-			if (Array.isArray(stored)) {
-				const have = new Set(stored);
-				const missing = ids.filter(id => !have.has(id));
+			let unsent = await sendAll(ids);
+
+			// verify once and resend what did not arrive
+			const check = await getStoredHashes();
+			if (check) {
+				const missing = ids.filter(id => check[id] !== rawMeta[id].hash);
 
 				if (missing.length) {
 					console.warn(`Forge Hammer [meta]: ${missing.length} entr(ies) missing after sync, resending`);
@@ -1326,7 +1329,7 @@ let Main = {
 			if (unsent.length) {
 				console.error(`Forge Hammer [meta]: ${unsent.length} building(s) could not be stored for the planner`, unsent);
 			} else {
-				console.debug(`Forge Hammer [meta]: ${ids.length} building(s) available to the planner for region "${region}"`);
+				console.debug(`Forge Hammer [meta]: ${ids.length} building(s) updated in the planner DB for region "${region}"`);
 			}
 		}
 
@@ -1383,11 +1386,14 @@ let Main = {
 
 		const responsePromise = _responsePromise;
 
+		// clear timer as soon as the response arrives
+		const timeoutMs = Number.isInteger(data.timeout) ? data.timeout : 1000;
+		let timer = null;
+
 		const response = await new Promise((resolve, reject) => {
+			timer = setTimeout(() => resolve({ ok: false, error: "response timeout for: " + JSON.stringify({ type: data.type, action: data.action }) }), timeoutMs);
 			responsePromise.then(resolve, reject);
-			const timeoutMs = Number.isInteger(data.timeout) ? data.timeout : 1000;
-			setTimeout(() => resolve({ ok: false, error: "response timeout for: " + JSON.stringify(data) }), timeoutMs);
-		});
+		}).finally(() => clearTimeout(timer));
 
 		if (typeof response !== 'object' || typeof response.ok !== 'boolean') {
 			throw new Error('invalid response from Extension-API call');
@@ -1910,10 +1916,10 @@ let Main = {
 					</tr>
 				</thead>
 				<tbody class="ally-list">`;
-			sortedRooms = Object.entries(rooms).sort((a,b)=>{
-				f=(r)=>{return Object.keys(Main.Allies.rarities).indexOf(r.allyRarity) + (r.buildingName?10:0) + (r.fragmentsAmount?100:0)}
-				return f(a[1])-f(b[1])
-			})
+
+			const rarityOrder = Object.keys(Main.Allies.rarities);
+			const sortRank = (r) => rarityOrder.indexOf(r.allyRarity) + (r.buildingName?10:0) + (r.fragmentsAmount?100:0);
+			let sortedRooms = Object.entries(rooms).sort((a,b) => sortRank(a[1]) - sortRank(b[1]));
 				
 			for (let [roomId,r] of sortedRooms){
 				let buildingId=roomId.split("#")[0]
@@ -2277,14 +2283,8 @@ let Main = {
 		for (let b of Buildings) {
 			if (b.player_id !== FH.Player.ID) continue; // Foreign building (z.B. visting neighbor and opening a GB)
 
-			if (FH.ActiveMap === "era_outpost") {
-				CityMap.era_outpost.data[b.id] = b;
-			}
-			else if (FH.ActiveMap === "cultural_outpost") {
-				CityMap.cultural_outpost.data[b.id] = b;
-			}
-			else if (FH.ActiveMap === "guild_raids") {
-				CityMap.guild_raids.data[b.id] = b;
+			if (FH.ActiveMap === "era_outpost" || FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "guild_raids" || FH.ActiveMap === "stellar_city") {
+				CityMap[FH.ActiveMap].data[b.id] = b;
 			} 
 			else {
 				Main.CityMapData[b.id] = b;
@@ -2456,6 +2456,9 @@ let Main = {
 			document.body.appendChild(a);
 			a.click();
 			document.body.removeChild(a);
+
+			// release the blob
+			setTimeout(() => url.revokeObjectURL(link), 10000);
 		}
 	},
 
