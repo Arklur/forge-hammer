@@ -995,7 +995,7 @@ let QIActions = {
         tooltip+=`<h1>${FH.t("Global.BoxTitle")}</h1>`
 		tooltip+=`<p style="margin: 3px">${srcLinks.icons("guild_raids_action_points")}&nbsp;${FH.HTML.Format(hourly)} ${moment.unix(next).fromNow()}</p>`
 		tooltip+=`<h2>${FH.t("Boxes.QIActions.FullAt")}</h2>`
-		tooltip+=`<p>${moment.unix(fullAt).format('lll')}</p></div>`
+		tooltip+=`<p>${FH.DateFormat.format(moment.unix(fullAt), 'dateTimeLong')}</p></div>`
 
 		return tooltip
 	},
