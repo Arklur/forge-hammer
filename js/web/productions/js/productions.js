@@ -703,8 +703,8 @@ let Productions = {
 		FH.Main.CityBuildingsData = CityBuildings.createBuildings(Object.values(FH.Main.CityMapData))
 		Productions.CombinedCityMapData = FH.Main.CityBuildingsData
 
-		if (CityMap.EraOutpost.data) {
-			Productions.CombinedCityMapData = Object.assign({}, Productions.CombinedCityMapData, CityMap.EraOutpost.data)
+		if (CityMap.era_outpost.data) {
+			Productions.CombinedCityMapData = Object.assign({}, Productions.CombinedCityMapData, CityMap.era_outpost.data)
 		}
 
 		// create empty arrays

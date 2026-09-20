@@ -26,18 +26,22 @@ let CityMap = {
 		eraName: null,
 		name: ''
 	},
-	CulturalOutpost: {
+	cultural_outpost: {
 		data: {},
 		areas: []
 	},
-	EraOutpost: {
+	era_outpost: {
 		data: null,
 		areas: [],
 	},
-	QI: {
+	stellar_city: {
+		data: {},
+		areas: []
+	},
+	guild_raids: {
 		data: null,
-		stats: null,
 		areas: [],
+		stats: null,
 		level: 0
 	},
 	metrics: {
@@ -99,21 +103,19 @@ let CityMap = {
 		let scale = FH.Storage.getItem('CityMapScale'),
 			outpostScale = FH.Storage.getItem('OutpostMapScale'),
 			view = FH.Storage.getItem('CityMapView');
-		if(null !== scale)
+		if (null !== scale)
 			CityMap.map.scale = parseInt(scale);
-		if(null !== view)
+		if (null !== view)
 			CityMap.map.view = view;
-		if(null !== outpostScale)
+		if (null !== outpostScale)
 			CityMap.map.outpostScale = parseInt(outpostScale);
 
 		let Data = FH.Main.CityMapData;
-		if (FH.ActiveMap === "cultural_outpost") 
-			Data = CityMap.CulturalOutpost.data;
-		else if (FH.ActiveMap === "era_outpost") 
-			Data = CityMap.EraOutpost.data;
+		if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "stellar_city")
+			Data = CityMap[FH.ActiveMap].data;
 		else if (FH.ActiveMap === "guild_raids") {
-			Data = CityMap.QI.data;
-			Title = FH.t('Boxes.General.Quantum_Incursion.short')+' '+FH.t('Boxes.General.Level')+' '+CityMap.QI.level;
+			Data = CityMap[FH.ActiveMap].data;
+			Title = FH.t('Boxes.General.Quantum_Incursion.short')+' '+FH.t('Boxes.General.Level')+' '+CityMap.guild_raids.level;
 		}
 		else if (FH.ActiveMap === "OtherPlayer") {
 			Data = CityMap.OtherPlayer.mapData;
@@ -167,7 +169,7 @@ let CityMap = {
 			return result;
 		}
 
-		let buildings = Object.values(CityMap.CulturalOutpost.data).filter(x => x.state.next_state_transition_at !== undefined && x.type !== 'main_building' && x.state.pausedAt === undefined);
+		let buildings = Object.values(CityMap.cultural_outpost.data).filter(x => x.state.next_state_transition_at !== undefined && x.type !== 'main_building' && x.state.pausedAt === undefined);
 		buildings = filterByTransitionTime(buildings);
 
 		FH.Alerts.getAll().then(existingAlerts => {
@@ -236,7 +238,7 @@ let CityMap = {
 
 		/* scale */
 		let scaleUnit = CityMap.map.scale;
-		if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "guild_raids") 
+		if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "guild_raids" || FH.ActiveMap === "stellar_city") 
 			scaleUnit = CityMap.map.outpostScale;
 
 		wrapper
@@ -249,7 +251,7 @@ let CityMap = {
 
 		$('#'+elemId+'Header > .title').attr('id', 'map' + CityMap.hashCode(Title));
 
-		if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "guild_raids") {
+		if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "guild_raids" || FH.ActiveMap === "stellar_city") {
 			oB.addClass('outpost').addClass(FH.ActiveMap)
 		}
 
@@ -281,7 +283,7 @@ let CityMap = {
 			let unit = parseInt($('#scale-view option:selected').data('scale'));
 			$('#grid-outer').attr('data-unit', unit);
 
-			if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "guild_raids") {
+			if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "guild_raids" || FH.ActiveMap === "stellar_city") {
 				FH.Storage.setItem('OutpostMapScale', unit);
 				CityMap.map.outpostScale = unit;
 			}
@@ -305,7 +307,7 @@ let CityMap = {
 		oB.append(wrapper);
 
 		if (FH.ActiveMap === "guild_raids")
-			if (CityMap.QI.data) {
+			if (CityMap.guild_raids.data) {
 				menu.append($(`<button class="btn ml-auto" id="copy-meta-infos" onclick="CityMap.copyMetaInfos()" style="margin-left:auto" />`).text(FH.t('Boxes.CityMap.CopyMetaInfos')));
 				$("#sidebar").append(CityMap.showQIBuildingList());
 			}
@@ -334,22 +336,25 @@ let CityMap = {
 		let xOffset = 0;
 		let yOffset = 0;
 		if (FH.ActiveMap === "cultural_outpost") {
-			ua = CityMap.CulturalOutpost.areas;
+			ua = CityMap[FH.ActiveMap].areas;
 			xOffset = 500;
 		}
 		else if (FH.ActiveMap === "era_outpost") {
-			ua = CityMap.EraOutpost.areas;
+			ua = CityMap[FH.ActiveMap].areas;
 			yOffset = 500;
 		}
+		else if (FH.ActiveMap === "stellar_city") {
+			ua = CityMap[FH.ActiveMap].areas;
+			yOffset = 1000;
+		}
 		else if (FH.ActiveMap === "guild_raids") {
-			ua = CityMap.QI.areas;
+			ua = CityMap[FH.ActiveMap].areas;
 			yOffset = 500;
 			xOffset = 500;
 		}
 
-		for(let i in ua) {
-			if(!ua.hasOwnProperty(i))
-				break;
+		for (let i in ua) {
+			if(!ua.hasOwnProperty(i)) break;
 
 			let x = (((ua[i]['x']-xOffset) * CityMap.map.gridSize) ),
 				y = (((ua[i]['y']-yOffset) * CityMap.map.gridSize) );
@@ -405,19 +410,19 @@ let CityMap = {
 
 		CityMap.BuildGrid();
 
-		let buildings = CityMap.CulturalOutpost.data;
+		let buildings = CityMap[FH.ActiveMap].data;
 		let xOffset = 0, yOffset = 0;
-		if (FH.ActiveMap === "era_outpost") {
-			buildings = CityMap.EraOutpost.data;
+		if (FH.ActiveMap === "era_outpost") 
 			yOffset = 500;
-		}
-		else if (FH.ActiveMap === "cultural_outpost") {
+		else if (FH.ActiveMap === "cultural_outpost") 
 			xOffset = 500;
-		}
 		else if (FH.ActiveMap === "guild_raids") {
-			buildings = CityMap.QI.data;
 			xOffset = 500;
 			yOffset = 500;
+		}
+		else if (FH.ActiveMap === "stellar_city") {
+			console.log(CityMap.stellar_city.data);
+			yOffset = 1000;
 		}
 
 		for (let b in buildings) {
@@ -474,25 +479,25 @@ let CityMap = {
 
 
 	showQIStats: () => {
-		if (!CityMap.QI.data) return;
+		if (!CityMap.guild_raids.data) return;
 
 		let out = '<div class="metaSums">';
 		out += '<p class="text-center"><i>'+FH.t('Boxes.CityMap.QIHint')+'</i></p>';
 		out += '<div class="flex between" style="margin-bottom: 10px;">';
-        out += '<span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' +  CityMap.QI.areas.length + '</span>';
-		out += '<div class="popStats"><span class="prod population">'+CityMap.QI.stats.availablePopulation+'/'+CityMap.QI.stats.totalPopulation+'</span> ';
-		let euphoria = Math.round(CityMap.QI.stats.euphoriaBoost*100);
-		out += '<span class="prod happiness euphoria'+euphoria+'" title="'+CityMap.QI.stats.euphoria+'">'+euphoria+'%</span></div>';
+        out += '<span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' +  CityMap.guild_raids.areas.length + '</span>';
+		out += '<div class="popStats"><span class="prod population">'+CityMap.guild_raids.stats.availablePopulation+'/'+CityMap.guild_raids.stats.totalPopulation+'</span> ';
+		let euphoria = Math.round(CityMap.guild_raids.stats.euphoriaBoost*100);
+		out += '<span class="prod happiness euphoria'+euphoria+'" title="'+CityMap.guild_raids.stats.euphoria+'">'+euphoria+'%</span></div>';
 		out += '</div>';
 
 		out += '<div class="productions">';
-		for (let [prod, value] of Object.entries(CityMap.QI.stats.resources)) {
+		for (let [prod, value] of Object.entries(CityMap.guild_raids.stats.resources)) {
 			out += '<span class="'+prod+'">'+srcLinks.icons(prod);
 				out += FH.HTML.Format(value);
 			out += "</span> ";
 		}
 		out += '</div><div class="boosts">';
-		for (let [boost, value] of Object.entries(CityMap.QI.stats.boosts)) {
+		for (let [boost, value] of Object.entries(CityMap.guild_raids.stats.boosts)) {
 			if (boost.includes("action_points"))
 				out += '<span class="'+boost+'">'+srcLinks.icons(boost)+value+"</span> ";
 			else 
@@ -505,11 +510,11 @@ let CityMap = {
 
 
 	showQIBuildingList: () => {
-		if (!CityMap.QI.data) return;
+		if (!CityMap.guild_raids.data) return;
 		let boosts = Boosts.Sums;
-		let buildings = Object.values(CityMap.QI.data);
+		let buildings = Object.values(CityMap.guild_raids.data);
 		
-		CityMap.QI.stats = { 
+		CityMap.guild_raids.stats = { 
 			resources: {
 				guild_raids_chrono_alloy: 0,
 				guild_raids_money: 0,
@@ -539,9 +544,9 @@ let CityMap = {
 			building.count = count;
 			uniqueBuildings.push(building);
 			
-			CityMap.QI.stats.euphoria += building.euphoria*count || 0;
-			CityMap.QI.stats.totalPopulation += (building.population >= 0 ? building.population*count : 0);
-			CityMap.QI.stats.availablePopulation += building.population*count;
+			CityMap.guild_raids.stats.euphoria += building.euphoria*count || 0;
+			CityMap.guild_raids.stats.totalPopulation += (building.population >= 0 ? building.population*count : 0);
+			CityMap.guild_raids.stats.availablePopulation += building.population*count;
 		}
 		uniqueBuildings.sort((a, b) => {
 			if (a.entityId < b.entityId) return -1
@@ -550,14 +555,14 @@ let CityMap = {
 		});
 
 
-		let euphoriaFactor = CityMap.QI.stats.euphoria/CityMap.QI.stats.totalPopulation;
-		CityMap.QI.stats.euphoriaBoost = 1.5;
-		if (euphoriaFactor <= 0.2) CityMap.QI.stats.euphoriaBoost = 0.2;
-		else if (euphoriaFactor > 0.20 && euphoriaFactor <= 0.60) CityMap.QI.stats.euphoriaBoost = 0.6;
-		else if (euphoriaFactor > 0.60 && euphoriaFactor <= 0.80) CityMap.QI.stats.euphoriaBoost = 0.8;
-		else if (euphoriaFactor > 0.80 && euphoriaFactor <= 1.20) CityMap.QI.stats.euphoriaBoost = 1;
-		else if (euphoriaFactor > 1.20 && euphoriaFactor <= 1.40) CityMap.QI.stats.euphoriaBoost = 1.1;
-		else if (euphoriaFactor > 1.40 && euphoriaFactor < 2.0) CityMap.QI.stats.euphoriaBoost = 1.2;
+		let euphoriaFactor = CityMap.guild_raids.stats.euphoria/CityMap.guild_raids.stats.totalPopulation;
+		CityMap.guild_raids.stats.euphoriaBoost = 1.5;
+		if (euphoriaFactor <= 0.2) CityMap.guild_raids.stats.euphoriaBoost = 0.2;
+		else if (euphoriaFactor > 0.20 && euphoriaFactor <= 0.60) CityMap.guild_raids.stats.euphoriaBoost = 0.6;
+		else if (euphoriaFactor > 0.60 && euphoriaFactor <= 0.80) CityMap.guild_raids.stats.euphoriaBoost = 0.8;
+		else if (euphoriaFactor > 0.80 && euphoriaFactor <= 1.20) CityMap.guild_raids.stats.euphoriaBoost = 1;
+		else if (euphoriaFactor > 1.20 && euphoriaFactor <= 1.40) CityMap.guild_raids.stats.euphoriaBoost = 1.1;
+		else if (euphoriaFactor > 1.40 && euphoriaFactor < 2.0) CityMap.guild_raids.stats.euphoriaBoost = 1.2;
 
 		for (let building of uniqueBuildings) {
 			if (building.type === "impediment" || building.type === "street") continue;
@@ -576,7 +581,7 @@ let CityMap = {
 					out += (building.production.guild_raids_money ? '<span class="prod guild_raids_money">'+FH.HTML.Format(building.production.guild_raids_money*-1.0)+'</span> ' : "")	
 				}
 				else {
-					let euphoriaBoost = CityMap.QI.stats.euphoriaBoost;
+					let euphoriaBoost = CityMap.guild_raids.stats.euphoriaBoost;
 					for (let [prod, value] of Object.entries(building.production)) {
 						// add coin and supply boosts
 						let boost = 0;
@@ -592,7 +597,7 @@ let CityMap = {
 						}
 						let boostedValue = Math.round(value*(euphoriaBoost+(boost/100)))
 						out += srcLinks.icons(prod)+FH.HTML.Format(boostedValue)+" ";
-						CityMap.QI.stats.resources[prod] += boostedValue*building.count;
+						CityMap.guild_raids.stats.resources[prod] += boostedValue*building.count;
 					}
 				}
 			}
@@ -600,7 +605,7 @@ let CityMap = {
 				for (let boost of building.boosts) {
 					let percentChar = (boost.type.includes("action_points") ? " " : "% ")
 					out += srcLinks.icons(boost.type)+boost.value+percentChar;
-					CityMap.QI.stats.boosts.hasOwnProperty(boost.type) ? CityMap.QI.stats.boosts[boost.type] += boost.value*building.count : CityMap.QI.stats.boosts[boost.type] = boost.value*building.count;
+					CityMap.guild_raids.stats.boosts.hasOwnProperty(boost.type) ? CityMap.guild_raids.stats.boosts[boost.type] += boost.value*building.count : CityMap.guild_raids.stats.boosts[boost.type] = boost.value*building.count;
 				}
 			}
 			out += "</td></tr>";
@@ -645,12 +650,13 @@ let CityMap = {
 			production = data.components?.AllAge?.production?.options[0]?.products[0]?.playerResources?.resources;
 		else if (production !== undefined && production.length > 1) 
 			production = data.components?.AllAge?.production?.options[3]?.products[0]?.requirements?.resources;
-		if (data.type === "main_building" || data.type === "residential")
+		if (data.type === "main_building" || data.type === "residential") {
 			production = data.available_products[0]?.product?.resources;
+		}
 
 		// grab the name of the population from the building id
 		/// cultural settlements
-		let populationName = data.id.split("_")[1].toLowerCase(); // id parts: vikings, japanese, egyptians, aztecs, muhgals, polynesia
+		let populationName = data.id.split("_")[1].toLowerCase(); // id parts: vikings, japanese, egyptians, aztecs, muhgals, polynesia, pirates
 		/// era settlements
 		if (FH.ActiveMap === "era_outpost") populationName = "colonists";
 
@@ -689,9 +695,7 @@ let CityMap = {
 
 
 	showOutpostBuildings: () => {
-		let buildings = Object.values(CityMap.CulturalOutpost.data);
-		if (FH.ActiveMap === "era_outpost")
-			buildings = Object.values(CityMap.EraOutpost.data);
+		let buildings = Object.values(CityMap[FH.ActiveMap].data);
 
 		let uniques = {};
 		for (let b of buildings) {
@@ -765,7 +769,7 @@ let CityMap = {
 
 
 	SetMapBuildings: async (Data = null)=> {
-		if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "guild_raids") {
+		if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "guild_raids" || FH.ActiveMap === "stellar_city") {
 			CityMap.SetOutpostBuildings();
 			return;
 		}
@@ -1290,8 +1294,8 @@ let CityMap = {
         let data = {};
         switch (FH.ActiveMap) {
             case 'guild_raids':
-                data.CityMapData = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.data);
-                data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.areas);
+                data.CityMapData = CityMap.removeDoubleUnderscoreKeys(CityMap.guild_raids.data);
+                data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.guild_raids.areas);
                 break;
             default:
                 data.CityMapData = CityMap.removeDoubleUnderscoreKeys(FH.Main.CityMapData);
@@ -1324,8 +1328,8 @@ let CityMap = {
 
 		switch (FH.ActiveMap) {
 			case 'guild_raids':
-				data.CityMapData   = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.data);
-				data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.areas);
+				data.CityMapData   = CityMap.removeDoubleUnderscoreKeys(CityMap.guild_raids.data);
+				data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.guild_raids.areas);
 				break;
 			case 'OtherPlayer':
 				data.playerName 	= CityMap.OtherPlayer.name;

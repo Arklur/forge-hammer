@@ -51,11 +51,7 @@
 	box-sizing: border-box;
 }
 
-.outpost #map-container {
-	right: 0;
-}
-
-#map-container.with-sidebar {
+#map-container.with-sidebar, .outpost #map-container, .outpost.stellar_city #map-container {
 	right: 0;
 }
 
@@ -111,7 +107,7 @@
 	color: var(--text-highlight);
 }
 
-.outpost #BuildingsFilter, .outpost #city-map-menu .btn-group, .outpost #map-filters {
+.outpost #BuildingsFilter, .outpost #city-map-menu .btn-group, .outpost #map-filters, .outpost.stellar_city #sidebar {
 	display: none;
 }
 
@@ -369,7 +365,7 @@
 	background-color: var(--background-color-street);
 	border-color: var(--border-color-street);
 }
-#grid-outer span.goods, #grid-outer span.cultural_goods_production, tr.cultural_goods_production td:first-child::before {
+#grid-outer span.goods, #grid-outer span.cultural_goods_production, #grid-outer span.stellar_capacity, tr.cultural_goods_production td:first-child::before {
 	background-color: var(--background-color-goods);
 	border-color: var(--border-color-goods);
 }
@@ -381,7 +377,7 @@
 	background-color: var(--background-color-main_building);
 	border-color: var(--border-color-main_building);
 }
-#grid-outer span.production, tr.production td:first-child::before {
+#grid-outer span.production, #grid-outer span.stellar_points, tr.production td:first-child::before {
 	background-color: var(--background-color-production);
 	border-color: var(--border-color-production);
 }

@@ -108,7 +108,7 @@ FH.Players = {
 FH.RessourceStock = [];
 FH.StartUpDone = new Promise(resolve => 
 		window.addEventListener('forgehammer#StartUpDone', resolve, {once: true, passive: true}));
-FH.possibleMaps = ['main', 'gex', 'gg', 'era_outpost', 'guild_raids', 'cultural_outpost', 'reconstruction'];
+FH.possibleMaps = ['main', 'gex', 'gg', 'era_outpost', 'guild_raids', 'cultural_outpost', 'reconstruction', 'stellar_city'];
 
 FH.Links = {
 	Player:{
@@ -454,22 +454,14 @@ document.addEventListener("DOMContentLoaded", function () {
 		QiProgress.QiMap = data.responseData;
 	})
 
-	// --------------------------------------------------------------------------------------------------
+	// -------------------------------------
 	// Karte wird gewechselt zum Außenposten
 	FH.proxy.addHandler('CityMapService', 'getCityMap', (data, postData) => {
 		Main.UpdateActiveMap(data.responseData.gridId);
 
-		if (FH.ActiveMap === 'era_outpost') {
-			CityMap.EraOutpost.data = Object.assign({}, ...data.responseData['entities'].map((x) => ({ [x.id]: x })));
-			CityMap.EraOutpost.areas = data.responseData['unlocked_areas'];
-		}
-		else if (FH.ActiveMap === 'guild_raids') {
-			CityMap.QI.data = Object.assign({}, ...data.responseData['entities'].map((x) => ({ [x.id]: x })));
-			CityMap.QI.areas = data.responseData['unlocked_areas'];
-		}
-		else if (FH.ActiveMap === 'cultural_outpost') {
-			CityMap.CulturalOutpost.data = Object.assign({}, ...data.responseData['entities'].map((x) => ({ [x.id]: x })));
-			CityMap.CulturalOutpost.areas = data.responseData['unlocked_areas'];
+		if (FH.ActiveMap === 'era_outpost' || FH.ActiveMap === 'cultural_outpost' || FH.ActiveMap === 'stellar_city' || FH.ActiveMap === 'guild_raids') {
+			CityMap[FH.ActiveMap].data = Object.assign({}, ...data.responseData['entities'].map((x) => ({ [x.id]: x })));
+			CityMap[FH.ActiveMap].areas = data.responseData['unlocked_areas'];
 			CityMap.checkOutpostBuildings();
 		}
 	});
@@ -518,7 +510,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		if (!data.responseData?.endsAt) return;
 
 		Main.UpdateActiveMap('guild_raids');
-		CityMap.QI.level = data.responseData.raidInstance?.difficultyLevel;
+		CityMap.guild_raids.level = data.responseData.raidInstance?.difficultyLevel;
 	});
 
 	// visiting another player
@@ -543,16 +535,16 @@ document.addEventListener("DOMContentLoaded", function () {
 			let building = data.responseData[0];
 			if (building && building.id) {
 				if (FH.ActiveMap === "cultural_outpost") {
-					CityMap.CulturalOutpost.data[building.id] = building;
+					CityMap.cultural_outpost.data[building.id] = building;
 					Main.CityMapUpdateEvent.trigger();
 					return
 				}
 				else if (FH.ActiveMap === "era_outpost") {
-					CityMap.EraOutpost.data[building.id] = building
+					CityMap.era_outpost.data[building.id] = building
 					return
 				}
 				else if (FH.ActiveMap === "guild_raids") {
-					CityMap.QI.data[building.id] = building
+					CityMap.guild_raids.data[building.id] = building
 					return
 				}
 
@@ -562,16 +554,16 @@ document.addEventListener("DOMContentLoaded", function () {
 		else if (data.requestMethod === 'removeBuilding') {
 			let ID = postData[0].requestData[0];
 			if (FH.ActiveMap === "cultural_outpost") {
-				delete CityMap.CulturalOutpost.data[ID];
+				delete CityMap.cultural_outpost.data[ID];
 				Main.CityMapUpdateEvent.trigger();
 				return
 			}
 			else if (FH.ActiveMap === "era_outpost") {
-				delete CityMap.EraOutpost.data[ID];
+				delete CityMap.era_outpost.data[ID];
 				return
 			}
 			else if (FH.ActiveMap === "guild_raids") {
-				delete CityMap.QI.data[ID];
+				delete CityMap.guild_raids.data[ID];
 				return
 			}
 			if (ID && Main.CityMapData[ID]) {
@@ -2286,13 +2278,13 @@ let Main = {
 			if (b.player_id !== FH.Player.ID) continue; // Foreign building (z.B. visting neighbor and opening a GB)
 
 			if (FH.ActiveMap === "era_outpost") {
-				CityMap.EraOutpost.data[b.id] = b;
+				CityMap.era_outpost.data[b.id] = b;
 			}
 			else if (FH.ActiveMap === "cultural_outpost") {
-				CityMap.CulturalOutpost.data[b.id] = b;
+				CityMap.cultural_outpost.data[b.id] = b;
 			}
 			else if (FH.ActiveMap === "guild_raids") {
-				CityMap.QI.data[b.id] = b;
+				CityMap.guild_raids.data[b.id] = b;
 			} 
 			else {
 				Main.CityMapData[b.id] = b;
