@@ -1021,7 +1021,7 @@ let showQIStock = (content, part) =>{
 
 FH.proxy.addCustomHandler('CityMapUpdated',()=>{
     if (FH.ActiveMap !== "guild_raids") return;
-    Object.values(CityMap?.QI?.data || {}).forEach(b => {
+    Object.values(CityMap?.guild_raids?.data || {}).forEach(b => {
         if (!(FH.Main.CityEntities[b.cityentity_id]?.components?.AllAge?.production?.options?.length > 1)) return; //only military & goods
         activeQIProductions[b.id] = b;
     })
