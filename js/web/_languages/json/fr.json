@@ -140,6 +140,10 @@
   "Boxes.BlueGalaxy.EstimatedBonus": "Bonus estimé : __FP__ PF et __Goods__ ressources",
   "Boxes.BlueGalaxy.FP": "PF",
   "Boxes.BlueGalaxy.Fragments": "Fragments",
+  "Boxes.BlueGalaxy.FragmentsHint": {
+    "s": "Essayez plutôt d'utiliser ceci lorsque vous recherchez des fragments spécifiques",
+    "r": "Try using this instead when looking for specific fragments"
+  },
   "Boxes.BlueGalaxy.Goods": "Ressources",
   "Boxes.BlueGalaxy.GoodsPerFP": "1 PF équivaut à __goods__ ressources",
   "Boxes.BlueGalaxy.GoodsValue": "Valeur d'1 ressource de l'âge actuel (en PF)",
@@ -273,6 +277,10 @@
   "Boxes.CityMap.military": "Militaire",
   "Boxes.CityMap.MissingApiKeyErrorHeader": "Jeton API manquant",
   "Boxes.CityMap.MissingApiKeySubmitError": "Sans un jeton API pour ce monde (obtenable gratuitement sur le site Web) vous ne pouvez pas transférer de villes ou de notes.<br>Cliquez ici pour obtenir des instructions :",
+  "Boxes.CityMap.NextEraRenovation": {
+    "s": "Kits for le prochain âge",
+    "r": "Kits for next era"
+  },
   "Boxes.CityMap.NormalPerspecitve": "Standard",
   "Boxes.CityMap.OlderThan1Era": " ont 1 âge de retard",
   "Boxes.CityMap.OlderThan2Era": " ont 2 âges de retard",
@@ -293,6 +301,10 @@
   "Boxes.CityMap.SetBuildings": "Bâtiments en kit",
   "Boxes.CityMap.ShowAscendableBuildings": "Bâtiments améliorables",
   "Boxes.CityMap.ShowDecayedBuildings": "Bâtiments limités échus",
+  "Boxes.CityMap.ShowFspDisabledBuildings": {
+    "s": "Bâtiments dont le système TPS est hors service",
+    "r": "FSP disabled buildings"
+  },
   "Boxes.CityMap.ShowNoStreetBuildings": "Bâtiments sans route",
   "Boxes.CityMap.ShowSubmitBox": "Envoyer",
   "Boxes.CityMap.ShowWorstBuildings": "Bâtiments les moins bien classé",
@@ -1449,6 +1461,30 @@
   "Boxes.Productions.Units": "Unités",
   "Boxes.ProductionsRating.AddBuilding": "Ajouter un bâtiment",
   "Boxes.ProductionsRating.AddBuildings": "Ajouter tous les bâtiments sélectionnés",
+  "Boxes.ProductionsRating.AdvancedAddValue": {
+    "s": "Ajouter",
+    "r": "Add"
+  },
+  "Boxes.ProductionsRating.AdvancedFilter": {
+    "s": "Filtres avancés",
+    "r": "Advanced filters"
+  },
+  "Boxes.ProductionsRating.AdvancedMatchAll": {
+    "s": "Mode: AND",
+    "r": "Mode: AND"
+  },
+  "Boxes.ProductionsRating.AdvancedMatchAny": {
+    "s": "Mode: OR",
+    "r": "Mode: OR"
+  },
+  "Boxes.ProductionsRating.AdvancedSizes": {
+    "s": "Filtre Dimension",
+    "r": "Size Filter"
+  },
+  "Boxes.ProductionsRating.AdvancedValues": {
+    "s": "filtrer par",
+    "r": "Filter by"
+  },
   "Boxes.ProductionsRating.Best": "Meilleur",
   "Boxes.ProductionsRating.BuildingName": "Bâtiment",
   "Boxes.ProductionsRating.ColumnFilter": {
@@ -1683,6 +1719,10 @@
   "Boxes.Technologies.IgnoreCurrentEraOptional": "Ignorer les technologies optionnelles des ères actuelles / futures",
   "Boxes.Technologies.IgnorePrevEra": "Ignorer les technologies optionnelles des ères précédentes",
   "Boxes.Technologies.NoTechs": "Vous avez atteint la fin de cette ère.",
+  "Boxes.Technologies.OnlyMissing": {
+    "s": "Afficher seulement les manquants",
+    "r": "Show Only Missing"
+  },
   "Boxes.Technologies.Resource": "Ressource",
   "Boxes.Technologies.Title": "Recherches technologiques",
   "Boxes.Tooltip.Building.addInhabitant": "Ajouter un habitant unique",
@@ -1861,7 +1901,7 @@
     "r": "Stellar Age Discovery"
   },
   "Eras.24.short": {
-    "s": "SAD",
+    "s": "ES-D",
     "r": "SAD"
   },
   "Eras.3": "Âge du Fer",
@@ -1887,20 +1927,68 @@
     "s": "aucun âge",
     "r": "No age"
   },
+  "General.After": {
+    "s": "Après",
+    "r": "After"
+  },
+  "General.AttAttacker": {
+    "s": "Attaque Rouge",
+    "r": "Red Attack"
+  },
+  "General.AttDefender": {
+    "s": "Défense Rouge",
+    "r": "Red Defense"
+  },
   "General.Battle": "Bataille",
+  "General.Before": {
+    "s": "Avant",
+    "r": "Before"
+  },
   "General.Boost": "Boost",
+  "General.Buildings": {
+    "s": "Bâtiments",
+    "r": "Buildings"
+  },
   "General.Cancel": "Annuler",
+  "General.Change": {
+    "s": "Changer",
+    "r": "Change"
+  },
   "General.Choose": "Veuillez choisir",
   "General.City": {
     "s": "Cité",
     "r": "City"
   },
+  "General.Coins": {
+    "s": "Pièces",
+    "r": "Coins"
+  },
   "General.Date": "Date",
+  "General.DefAttacker": {
+    "s": "Attaque Bleue",
+    "r": "Blue Attack"
+  },
+  "General.DefDefender": {
+    "s": "Défense Bleue",
+    "r": "Blue Defense"
+  },
+  "General.Details": {
+    "s": "Détails",
+    "r": "Details"
+  },
   "General.Disclaimer": "Clause de non-responsabilité",
   "General.Error": "Erreur",
   "General.Everything": {
     "s": "tout",
     "r": "Everything"
+  },
+  "General.ForgePoints": {
+    "s": "Points Forges",
+    "r": "Forge Points"
+  },
+  "General.Fragments": {
+    "s": "Fragments",
+    "r": "Fragments"
   },
   "General.GB": "Grand Monument",
   "General.Good": "Ressource",
@@ -1912,8 +2000,24 @@
   },
   "General.Items": "Objets",
   "General.Level": "Niveau",
+  "General.Medals": {
+    "s": "Médailles",
+    "r": "Medals"
+  },
   "General.Open": "Ouvrir",
   "General.Player": "Joueur",
+  "General.PopulationNet": {
+    "s": "Population disponible",
+    "r": "Available population"
+  },
+  "General.PopulationProvided": {
+    "s": "Population Totale",
+    "r": "Total population"
+  },
+  "General.PopulationRequired": {
+    "s": "Population Requise",
+    "r": "Required population"
+  },
   "General.Reset": "Réinitialiser",
   "General.Save": "Sauver",
   "General.Search": {
@@ -1921,9 +2025,25 @@
     "r": "Search"
   },
   "General.Send": "Envoyer",
+  "General.Space": {
+    "s": "Place",
+    "r": "Space"
+  },
   "General.Success": "Réussi",
+  "General.Supplies": {
+    "s": "Marchandises",
+    "r": "Supplies"
+  },
   "General.Unit": "Unité",
   "General.Units": "Unités",
+  "General.UnitsCurrent": {
+    "s": "Unités, âge en cours",
+    "r": "Units, current age"
+  },
+  "General.UnitsNext": {
+    "s": "Unités, âge suivant",
+    "r": "Units, next age"
+  },
   "Global.BoxTitle": "Forge Hammer",
   "GvG.Independences.Tooltip": "Nombre de secteurs libérés depuis le dernier calcul.",
   "GvG.Independences.Tooltip.Warning": "Peut être inexact, si vous jouez sur plusieurs PC.",
@@ -2451,6 +2571,46 @@
     "s": "Stocker les bâtiments",
     "r": "Store buildings"
   },
+  "XPlan.Compare.Axes": {
+    "s": "Changer les axes",
+    "r": "Change Axes"
+  },
+  "XPlan.Compare.BuildingsAdded": {
+    "s": "Nouveau Bâtiment",
+    "r": "New buildings"
+  },
+  "XPlan.Compare.BuildingsChanges": {
+    "s": "Removed and added buildings",
+    "r": "Removed and added buildings"
+  },
+  "XPlan.Compare.BuildingsRemoved": {
+    "s": "Bâtiments enlevés",
+    "r": "Removed buildings"
+  },
+  "XPlan.Compare.ChangedOnly": {
+    "s": "Afficher seulement les changements",
+    "r": "Only show changes"
+  },
+  "XPlan.Compare.Chart": {
+    "s": "Afficher le diagramme",
+    "r": "Show Chart"
+  },
+  "XPlan.Compare.FeatureCity": {
+    "s": "Base",
+    "r": "Base"
+  },
+  "XPlan.Compare.GroupItems": {
+    "s": "Items &amp; fragments (per 24h)",
+    "r": "Items & fragments (per 24h)"
+  },
+  "XPlan.Compare.Metrics": {
+    "s": "Tous les métriques",
+    "r": "All Metrics"
+  },
+  "XPlan.Compare.Title": {
+    "s": "Statistique Avant et après ",
+    "r": "Before and After Stats"
+  },
   "XPlan.Confirms.DeletePlan": {
     "s": "Effacer le plan ? Ceci ne peut pas être annuler.",
     "r": "Delete this plan? This cannot be undone."
@@ -2478,6 +2638,10 @@
   "XPlan.Language.SystemDefault": {
     "s": "Langue",
     "r": "Language"
+  },
+  "XPlan.Loading.Failed": {
+    "s": "Impossible de charger les données",
+    "r": "Could not load data"
   },
   "XPlan.Modal.DiscardAndContinue": {
     "s": "Effacer et continuer",

@@ -344,6 +344,10 @@
   "Boxes.CityMap.clan_power_production": "Produkcja potencjału gildii",
   "Boxes.CityMap.CollectSoon": "Wkrótce do zbioru: __hours__ hours",
   "Boxes.CityMap.CopyMetaInfos": "Skopiuj dane miasta",
+  "Boxes.CityMap.cultural_goods_production": {
+    "s": "Towary kulturowe",
+    "r": "Cultural Goods"
+  },
   "Boxes.CityMap.culture": "Kulturowe",
   "Boxes.CityMap.decoration": "Dekoracje",
   "Boxes.Citymap.Efficiency": "Wydajność",
@@ -2075,6 +2079,10 @@
     "r": "Map"
   },
   "Boxes.RecurringQuests.AND": "ORAZ",
+  "Boxes.RecurringQuests.NoQuests": {
+    "s": "Nie znaleziono jeszcze żadnych zadań. Proszę najpierw dojść do zadań powtarzalnych dla tej epoki!",
+    "r": "No quests found yet. Please reach the recurring quests of this era first!"
+  },
   "Boxes.RecurringQuests.OR": "LUB",
   "Boxes.RecurringQuests.showCounter": "Wyświetlaj licznik rozpoczętych zadań w menu",
   "Boxes.RecurringQuests.Table.Quest": "Nazwa zadania",
@@ -2514,6 +2522,10 @@
   "General.Coins": {
     "s": "Monety",
     "r": "Coins"
+  },
+  "General.Construction": {
+    "s": "Budownictwo",
+    "r": "Construction"
   },
   "General.Date": "Data",
   "General.DefAttacker": {
