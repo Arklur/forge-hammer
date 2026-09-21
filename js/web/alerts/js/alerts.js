@@ -1644,6 +1644,18 @@ let Alerts = function(){
 		show: () => {
 			tmp.web.show();
 		},
+		
+		getAll: () => {
+			return tmp.extAlerts.getAll();
+		},
+
+		delete: (id) => {
+			delete tmp.timer.nextAlerts[id];
+			return tmp.data.delete(id).then(result => {
+				if (tmp.web.visible()) tmp.web.body.tabs.updateAlerts();
+				return result;
+			});
+		},
 
 		update: {
 			data: {

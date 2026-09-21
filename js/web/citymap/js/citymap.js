@@ -179,7 +179,7 @@ let CityMap = {
 		FH.Alerts.getAll().then(existingAlerts => {
 			$('#alertcountdown').remove();
 			if (FH.ActiveMap !== "cultural_outpost" && FH.ActiveMap !== "guild_raids" && FH.ActiveMap !== "stellar_city") return;
-			const alertTitle = FH.t("Boxes.BetterMusic.Settlement");
+			const alertTitle = FH.t("General."+FH.ActiveMap);
 			const existingExpires = new Set(
 				(existingAlerts || [])
 					.filter(a => a.data.title === alertTitle)
@@ -203,12 +203,24 @@ let CityMap = {
 		});
 		
 		$('#hammerBar').off('click.outpostCountdown').on('click.outpostCountdown', '#alertcountdown li', function (e) {
-			if ($(this).hasClass('active')) return;
+			const li = $(this);
+			const alertTitle = FH.t("General." + FH.ActiveMap);
+			const expires = li.data('time') * 1000;
+
+			if (li.hasClass('active')) {
+				FH.Alerts.getAll().then(alerts => {
+					(alerts || [])
+						.filter(a => a.data.title === alertTitle && a.data.expires === expires)
+						.forEach(a => FH.Alerts.delete(a.id));
+					li.removeClass('active');
+				});
+				return;
+			}
 
 			FH.Alerts.add({
-				title: FH.t("General."+FH.ActiveMap),
+				title: alertTitle,
 				body: "",
-				expires: $(this).data('time') * 1000,
+				expires: expires,
 				repeat: -1,
 				persistent: true,
 				tag: '',
@@ -216,7 +228,7 @@ let CityMap = {
 				vibrate: false,
 				actions: null
 			});
-			$(this).addClass('active');
+			li.addClass('active');
 		});
 	},
 

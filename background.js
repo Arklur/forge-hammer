@@ -669,7 +669,7 @@ plannerDB.version(1).stores({
 							return APIsuccess(true);
 						}
 
-					} // end of switch action
+					}
 
 				} else { // limited alerts-API for external use
 					if (!Number.isInteger(request.playerId)) return APIerror('malformed request: expected "playerId": integer');
@@ -677,7 +677,6 @@ plannerDB.version(1).stores({
 
 					const playerId = request.playerId;
 					const action = request.action;
-					// @ts-ignore
 					const server = sender.origin;
 
 					switch (action) {
@@ -767,10 +766,10 @@ plannerDB.version(1).stores({
 							return APIsuccess(true);
 						}
 
-					} // end of switch action
+					} 
 
+					return APIerror('unknown alerts action: '+action);
 				} // end of limited alerts-API
-
 			} // end of alerts-API
 
 
