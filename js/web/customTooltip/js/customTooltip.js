@@ -437,11 +437,11 @@ let Tooltips = {
 
             }
 
-            for ([resource,amount] of Object.entries(levels.AllAge?.staticResources?.resources?.resources||{})) {
-                provides+=`<tr><td>${srcLinks.icons(resource)+" "+ span(amount,true)}</td></tr>`
-            }
-            for ([resource,amount] of Object.entries(levels?.[minEra]?.staticResources?.resources?.resources||{})) {
-                provides+=`<tr><td>${srcLinks.icons(resource)+" "+ range(amount,levels[maxEra]?.staticResources?.resources?.resources?.[resource],true)}</td></tr>`
+            let minRes = Object.assign(structuredClone(levels.AllAge?.staticResources?.resources?.resources||{}),levels?.[minEra]?.staticResources?.resources?.resources||{});
+            let maxRes = Object.assign(structuredClone(levels.AllAge?.staticResources?.resources?.resources||{}),levels?.[maxEra]?.staticResources?.resources?.resources||{});
+
+            for ([resource,amount] of Object.entries(minRes)) {
+                provides+=`<tr><td>${srcLinks.icons(resource)+" "+ range(amount,maxRes[resource],true)}</td></tr>`
             }
             if (levels.AllAge?.happiness?.provided) {
                 provides+=`<tr><td>${srcLinks.icons("happiness")+" "+ span(levels.AllAge?.happiness?.provided,true) + polMod}</td></tr>`
