@@ -216,7 +216,7 @@ const Profile = {
                 cl.push('<span class="removable"><img src="'+srcLinks.getBuilding(gb.cityentity_id)+'" />' + gb.level +'</span>');
         }
         if (allGBs.length > 6)
-            cl.push('<span class="total" data-original-title="'+FH.t('Boxes.GuildFights.Total')+': '+allGBs.length+'"><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_greatbuilding.png`,true)+'" />' + allGBs.length +'</span>');
+            cl.push('<span class="total" data-original-title="'+FH.t('General.Total')+': '+allGBs.length+'"><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_greatbuilding.png`,true)+'" />' + allGBs.length +'</span>');
 
         cl.push('</div>');
 
@@ -349,7 +349,7 @@ const Profile = {
             }
             if (Profile.units > 0) {
                 cc.push('<span class="removable">'+
-                    '<span class="hidden-text"><br>&numsp;&middot;&nbsp;'+FH.t('Boxes.Productions.Units')+':&nbsp;</span>'+
+                    '<span class="hidden-text"><br>&numsp;&middot;&nbsp;'+FH.t('General.Units')+':&nbsp;</span>'+
                     '<img src="' + srcLinks.get(`/shared/gui/pvp_arena/hud/pvp_arena_icon_army.png`,true)+'" />'+FH.HTML.Format(parseInt(Profile.units))+'</span>');
                 cc.push('<br>');
             }

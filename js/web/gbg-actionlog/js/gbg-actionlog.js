@@ -1021,7 +1021,7 @@ let GBGActionLog = {
             let dayLabel = moment(d, 'YYYY-MM-DD').format(dateFmt);
             h += `<th class="is-number" data-type="gbgalReportBody" data-export="${dayLabel}">${dayLabel}</th>`;
         }
-        h += `<th class="is-number descending" data-type="gbgalReportBody" data-export="${FH.t('Boxes.GBGActionLog.Total')}">${FH.t('Boxes.GBGActionLog.Total')}</th>`;
+        h += `<th class="is-number descending" data-type="gbgalReportBody" data-export="${FH.t('General.Total')}">${FH.t('General.Total')}</th>`;
         h += '</tr></thead><tbody class="gbgalReportBody">';
 
         for (let p of players) {
@@ -1187,7 +1187,7 @@ let GBGActionLog = {
         for (let h = 0; h < 24; h++) {
             head += `<th class="is-number gbgal-hourcol" data-type="gbgalActivityBody" data-export="${hourLabel(h)}">${hourLabel(h)}</th>`;
         }
-        head += `<th class="is-number descending" data-type="gbgalActivityBody" data-export="${FH.t('Boxes.GBGActionLog.Total')}">${FH.t('Boxes.GBGActionLog.Total')}</th>`;
+        head += `<th class="is-number descending" data-type="gbgalActivityBody" data-export="${FH.t('General.Total')}">${FH.t('General.Total')}</th>`;
         head += '</tr>';
 
         let body = '';
@@ -1202,7 +1202,7 @@ let GBGActionLog = {
 
         // Guild-total footer row: kept in <tfoot> so tableSorter (tbody-only) leaves it pinned; shaded by its own peak hour
         let grand = 0,
-            foot = `<tr class="gbgal-activity-total"><td>${FH.t('Boxes.GBGActionLog.Total')}</td>`;
+            foot = `<tr class="gbgal-activity-total"><td>${FH.t('General.Total')}</td>`;
         for (let h = 0; h < 24; h++) {
             foot += `<td class="gbgal-hourcol${GBGActionLog.heatClass(hourTotals[h], maxHourTotal)}">${hourTotals[h] || ''}</td>`;
             grand += hourTotals[h];

@@ -379,7 +379,7 @@ let FPCollector = {
 
 			$('#fp-collectorBody').append(
 				`<div class="dark-bg head sticky">
-					<div class="text-warning"><strong>${FH.t('Boxes.FPCollector.Total')} <span id="fp-collector-total-fp"></span>${FH.t('Boxes.FPCollector.FP')}</strong></div>
+					<div class="text-warning"><strong>${FH.t('General.Total')}: <span id="fp-collector-total-fp"></span>${FH.t('Boxes.FPCollector.FP')}</strong></div>
 					<div class="text-right"><button class="btn btn-slim" id="FPCollectorPicker">${FPCollector.formatRange()}</button></div>
 				</div>`,
 				`<div id="fp-collectorBodyInner"></div>`

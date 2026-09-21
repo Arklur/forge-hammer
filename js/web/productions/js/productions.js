@@ -1468,7 +1468,7 @@ let Productions = {
 				table.push('<th data-type="prodlist'+type+'" class="is-number" data-export="' + FH.t('Boxes.Productions.Headings.era') + '">' + FH.t('Boxes.Productions.Headings.era') + '</th>')
 
 				if (!type.includes('att') && !type.includes('def')) {
-					table.push('<th class="is-date" data-type="prodlist'+type+'">' + FH.t('Boxes.Productions.Headings.earning') + '</th>')
+					table.push('<th class="is-date" data-type="prodlist'+type+'">' + FH.t('General.Collection') + '</th>')
 				}
 				table.push('<th data-type="prodlist'+type+'" class="no-sort" '+((type.includes('att') || type.includes('def')) ? 'colspan="3"' : '')+'> </th>')
 				table.push('</tr>')
@@ -1641,7 +1641,7 @@ let Productions = {
 			table.push('<th data-type="prodlist'+type+'" class="is-number text-center"><span data-original-title="'+FH.t('Eras.'+(parseInt(era)+1))+'">' + FH.t('Eras.'+(parseInt(era)+1)+'.short') + '<br><small>'+FH.HTML.Format(erasCurrent[era])+'/'+FH.HTML.Format(erasTotal[era])+'</small></span></th>')
 		}
 		table.push('<th data-type="prodlist'+type+'" class="is-number">' + FH.t('Boxes.Productions.Headings.era') + '</th>')
-		table.push('<th data-type="prodlist'+type+'" class="is-date">'+FH.t('Boxes.Productions.Headings.earning')+'</th>')
+		table.push('<th data-type="prodlist'+type+'" class="is-date">'+FH.t('General.Collection')+'</th>')
 		table.push('<th data-type="prodlist'+type+'" class="no-sort"> </th>')
 		table.push('</tr>')
 		table.push('</thead>')
@@ -1805,7 +1805,7 @@ let Productions = {
 			table.push('<th data-type="prodlist'+type+'" class="is-number text-center"><span data-original-title="'+FH.t('Eras.'+(parseInt(era)+1))+'">' + FH.t('Eras.'+(parseInt(era)+1)+'.short') + '<br><small>'+FH.HTML.Format(erasCurrent[era])+'/'+FH.HTML.Format(erasTotal[era])+'</small></span></th>')
 		}
 		table.push('<th data-type="prodlist'+type+'" class="is-number">' + FH.t('Boxes.Productions.Headings.era') + '</th>')
-		table.push('<th data-type="prodlist'+type+'" class="is-date">'+FH.t('Boxes.Productions.Headings.earning')+'</th>')
+		table.push('<th data-type="prodlist'+type+'" class="is-date">'+FH.t('General.Collection')+'</th>')
 		table.push('<th data-type="prodlist'+type+'" class="no-sort"> </th>')
 		table.push('</tr>')
 		table.push('</thead>')
@@ -2247,7 +2247,7 @@ let Productions = {
 			return FH.t('Boxes.Productions.GuildGoods');
         }
 		else if (GoodType.includes('units')) {
-			return FH.t('Boxes.Productions.Units');
+			return FH.t('General.Units');
 		}
 		else if (GoodType.includes('battleground')) {
 			return FH.t('Boxes.General.Guild_Battlegrounds');

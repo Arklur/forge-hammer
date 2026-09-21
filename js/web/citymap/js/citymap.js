@@ -150,7 +150,7 @@ let CityMap = {
 
 
 	checkOutpostBuildings: () => {
-		if (FH.ActiveMap !== "cultural_outpost") {
+		if (FH.ActiveMap !== "cultural_outpost" && FH.ActiveMap !== "guild_raids" && FH.ActiveMap !== "stellar_city") {
 			$('#alertcountdown').remove();
 			return;
 		}
@@ -173,12 +173,12 @@ let CityMap = {
 			return result;
 		}
 
-		let buildings = Object.values(CityMap.cultural_outpost.data).filter(x => x.state.next_state_transition_at !== undefined && x.type !== 'main_building' && x.state.pausedAt === undefined);
+		let buildings = Object.values(CityMap[FH.ActiveMap].data).filter(x => x.state.next_state_transition_at !== undefined && x.type !== 'main_building' && x.state.pausedAt === undefined);
 		buildings = filterByTransitionTime(buildings);
 
 		FH.Alerts.getAll().then(existingAlerts => {
 			$('#alertcountdown').remove();
-			if (FH.ActiveMap !== "cultural_outpost") return;
+			if (FH.ActiveMap !== "cultural_outpost" && FH.ActiveMap !== "guild_raids" && FH.ActiveMap !== "stellar_city") return;
 			const alertTitle = FH.t("Boxes.BetterMusic.Settlement");
 			const existingExpires = new Set(
 				(existingAlerts || [])
@@ -193,7 +193,7 @@ let CityMap = {
 			for (let bldg of buildings) {
 				const expiresMs = bldg.state.next_state_transition_at * 1000;
 				const isActive = existingExpires.has(expiresMs) ? ' active' : '';
-				const title = bldg.state.__class__ === "ProducingState" ? FH.t("Boxes.CityMap."+bldg.type) : FH.t("General.Construction");
+				const title = bldg.state.__class__ === "ProducingState" ? FH.t("General.Collection") : FH.t("General.Construction");
 				countdowns += `<li class="countdown ${bldg.state.__class__}${isActive} ${bldg.type}" data-time="${bldg.state.next_state_transition_at}">
 					${moment.unix(bldg.state.next_state_transition_at).format('HH:mm')} ${title}
 				</li>`;
@@ -206,7 +206,7 @@ let CityMap = {
 			if ($(this).hasClass('active')) return;
 
 			FH.Alerts.add({
-				title: FH.t("Boxes.BetterMusic.Settlement"),
+				title: FH.t("General."+FH.ActiveMap),
 				body: "",
 				expires: $(this).data('time') * 1000,
 				repeat: -1,
@@ -1069,7 +1069,7 @@ let CityMap = {
 			let str = `<span data-original-title="${pct}%"><span class="square ${type}"></span>${count}x ${TypeName}</span> <span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.buildingAreas[type]}</span>`;
 
 			if (type === 'street') {
-				str = `<span data-original-title="${pct}%"><span class="square ${type}"></span>${count}x ${TypeName}</span> <small class="street-eff">${FH.HTML.Format(Math.round(CityMap.EfficiencyFactor * 10000) / 100)}% ${FH.t('Boxes.Citymap.Efficiency')}</small>`;
+				str = `<span data-original-title="${pct}%"><span class="square ${type}"></span>${count}x ${TypeName}</span> <small class="street-eff">${FH.HTML.Format(Math.round(CityMap.EfficiencyFactor * 10000) / 100)}% ${FH.t('General.Efficiency')}</small>`;
 			}
 			str = `<li>${str}</li>`;
 			areaStats.push(str);

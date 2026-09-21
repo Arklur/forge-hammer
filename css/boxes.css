@@ -1251,11 +1251,17 @@ hammerBar */
 #hammerBar.cultural_outpost {
 	margin-left: 311px;
 }
-#hammerBar.gg, #hammerBar.guild_raids .fpContainer, #hammerBar.gex .buyable-fp, #hammerBar.reconstruction .fpContainer, #hammerBar.main .fpbar, #hammerBar.cultural_outpost .fpContainer, #hammerBar.cultural_outpost .fpbar {
+#hammerBar.gg, #hammerBar.stellar_city .fpContainer, #hammerBar.guild_raids .fpContainer, #hammerBar.gex .buyable-fp, #hammerBar.reconstruction .fpContainer, #hammerBar.main .fpbar, #hammerBar.cultural_outpost .fpContainer, #hammerBar.cultural_outpost .fpbar {
 	display: none;
 }
 #hammerBar.gex {
 	margin-left: 354px;
+}
+#hammerBar.guild_raids {
+	margin-left: 440px;
+}
+#hammerBar.stellar_city {
+	margin-left: 298px;
 }
 #hammerBar.reconstruction {
 	margin-left: 0;
