@@ -1076,7 +1076,7 @@ FH.proxy.addRequestHandler('CityProductionService', 'startProduction', (postData
     if (FH.ActiveMap !== "guild_raids") return;
     let building = postData?.requestData?.[0];
     let prodOption = postData?.requestData?.[1];
-    if (!CityMap.QI?.data?.[building]) return;    
+    if (!CityMap.guild_raids?.data?.[building]) return;    
     let product = FH.Main.CityEntities?.[CityMap.guild_raids.data[building].cityentity_id]?.components?.AllAge?.production?.options?.[prodOption]?.products?.[0]
     if (!product) return;
 
