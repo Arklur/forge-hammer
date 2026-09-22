@@ -72,6 +72,7 @@ let BlueGalaxy = {
                 resize: true,
                 settings: BlueGalaxy.ShowSettings,
                 active_maps:"main",
+                popout: true
             });
 
             FH.HTML.AddCssFile('bluegalaxy');

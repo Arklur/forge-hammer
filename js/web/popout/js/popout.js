@@ -342,9 +342,7 @@ let Popout = {
 
 
 	/**
-	 * Builds the (empty) document of the pop-out and returns its blob url.
-	 * Title, language and base url are baked in, so the browser shows them
-	 * right away and does not fall back to a generic "Blank Page".
+	 * Builds the (empty) document of the pop-out and returns its blob url
 	 *
 	 * @returns {string} object url, revoke it once the window has loaded
 	 */
@@ -353,6 +351,7 @@ let Popout = {
 			+ `<html lang="${HTML.escapeHtml(FH.BaseData.GuiLng || 'en')}">`
 			+ '<head>'
 			+ '<meta charset="utf-8">'
+			+ `<link rel="icon" type="image/x-icon" href="${FH.extUrl}images/app48.png">`
 			+ `<base href="${HTML.escapeHtml(location.href)}">`
 			+ `<title>${HTML.escapeHtml(Popout.boxTitle(box, id))}</title>`
 			+ '</head>'
