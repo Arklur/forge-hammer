@@ -132,6 +132,7 @@ let CityMap = {
 				dragdrop: true,
 				resize: true,
 				minimize : true,
+				popout: true
 			});
 
 			setTimeout(()=>{
@@ -308,7 +309,7 @@ let CityMap = {
 				CityMap.map.scale = unit;	
 			}
 
-			$('#map-container').scrollTo( $('.highlighted') , 800, {offset: {left: -280, top: -280}, easing: 'swing'});
+			$('#map-container').scrollTo( CityMap.find('.highlighted') , 800, {offset: {left: -280, top: -280}, easing: 'swing'});
 		});
 
 		// Button for submit Box
@@ -409,6 +410,35 @@ let CityMap = {
 	},
 
 
+	/**
+	 * (Re)creates the draggable of the map grid
+	 */
+	initGridDrag: () => {
+		let grid = $('#grid-outer');
+		if (!grid.length) return;
+
+		if (grid.draggable('instance')) grid.draggable('destroy');
+
+		grid.draggable({
+			drag: (event, ui) => {
+				Object.assign(ui.position, CityMap.SetGridBoundaries(ui.position));
+			},
+			stop: (event, ui) => {
+				let view = JSON.parse(FH.Storage.getItem('CityMapViewOffset')) || {};
+				view[FH.ActiveMap + '_' + CityMap.map.view] = {top: ui.position.top, left: ui.position.left};
+
+				FH.Storage.setItem('CityMapViewOffset', JSON.stringify(view));
+			}
+		});
+	},
+
+
+	/**
+	 * Selector scoped to the city map box (needed for popout)
+	 */
+	find: (selector) => $('#citymap-main').find(selector),
+
+
 	SetOutpostBuildings: () => {
 		$('#grid-outer').find('.map-bg').remove();
 		$('#grid-outer').find('.entity').remove();
@@ -476,19 +506,7 @@ let CityMap = {
 			html: true,
 		});
 
-		$('#grid-outer').draggable({
-			drag: function(event, ui) {
-				Object.assign(ui.position, CityMap.SetGridBoundaries(ui.position));
-			},
-			stop: function( event, ui ) {
-				let mapOffsets = {
-					[FH.ActiveMap+'_'+CityMap.map.view]: ui.position
-				}
-				let view = JSON.parse(FH.Storage.getItem('CityMapViewOffset'))||{};
-
-				FH.Storage.setItem('CityMapViewOffset',JSON.stringify(Object.assign(view,mapOffsets)));
-			}
-		});
+		CityMap.initGridDrag();
 	},
 
 
@@ -1014,19 +1032,7 @@ let CityMap = {
 		let StreetsUsed = CityMap.metrics.buildingAreas['street'] | 0;
 		CityMap.EfficiencyFactor = StreetsNeeded / StreetsUsed;
 
-		$('#grid-outer').draggable({
-			drag: function(event, ui) {
-				Object.assign(ui.position, CityMap.SetGridBoundaries(ui.position));
-			},
-			stop: function( event, ui ) {
-				let mapOffsets = {
-					[FH.ActiveMap+'_'+CityMap.map.view]: ui.position
-				}
-				let view = JSON.parse(FH.Storage.getItem('CityMapViewOffset'))||{};
-
-				FH.Storage.setItem('CityMapViewOffset',JSON.stringify(Object.assign(view,mapOffsets)));
-			}
-		});
+		CityMap.initGridDrag();
 		CityMap.getAreas();
 		
 		$('#grid-outer [data-original-title]').tooltip({
@@ -1056,7 +1062,7 @@ let CityMap = {
 		}
 
 
-		$('.building-stats').html(
+		CityMap.find('.building-stats').html(
 			'<img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />'+
 			'<span data-original-title="'+FH.t('Boxes.CityMap.FreeArea')+'">' + txtFree + 
 			'</span> / <span data-original-title="'+FH.t('Boxes.CityMap.WholeArea')+'">' + total + '</span>').addClass('text-right');
@@ -1090,34 +1096,32 @@ let CityMap = {
 
 		areaStats.push(`<b>${FH.t('Boxes.CityMap.Highlight')}</b>`)
 		areaStats.push('<ul class="highlight-map">' +
-			'<li onClick="CityMap.highlightNoStreetBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.roadless')+', '+parseFloat(100*CityMap.metrics.roadlessBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/shared/gui/buffbar/buffbar_icon_buff_unconnected.png`,true)+'" />' + CityMap.metrics.roadlessBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.roadlessBuildingsArea + '</span></li>' +
-			'<li onClick="CityMap.highlightGBGBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.buildingFromGBG')+', '+parseFloat(100*CityMap.metrics.gbgBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/cash_shop/gui/cash_shop_icon_navi_gbg_selected.png`,true)+'" />' + CityMap.metrics.gbgBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.gbgArea+ '</span></li>' +
-			'<li onClick="CityMap.highlightQIBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.buildingFromQI')+', '+parseFloat(100*CityMap.metrics.qiBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/guild_raids/windows/guild_raids_guild_raid_emblem.png`,true)+'" />' + CityMap.metrics.qiBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.qiArea+ '</span></li>' + 
-			`<li onClick="CityMap.highlightLimitedBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.limited')}, ${parseFloat(100*CityMap.metrics.limitedBuildings/CityMap.metrics.buildings).toFixed(1)}%">
-			<span>
-			<img src="${srcLinks.get(`/shared/gui/upgrade/upgrade_icon_limited_building.png`,true)}" />${CityMap.metrics.limitedBuildings}
-			<span class="openList" onclick="CityMap.buildingGroupList('limited')"><img src="${FH.extUrl}images/hud/open-eye.png"></span>
-			</span> 
-			<span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.limitedBuildingsArea}</span></li>` +
-			`<li onClick="CityMap.highlightAscendableBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.ShowAscendableBuildings')}, ${parseFloat(100*CityMap.metrics.ascendableBuildings/CityMap.metrics.buildings).toFixed(1)}%">
-			<span>
-			<img src="${srcLinks.get(`/shared/icons/limited_building_upgrade.png`,true)}" />${CityMap.metrics.ascendableBuildings} 
-			<span class="openList" onclick="CityMap.buildingGroupList('acendable')"><img src="${FH.extUrl}images/hud/open-eye.png"></span>
-			</span> 
-			<span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.ascendableBuildingsArea }</span></li>` +
+			((CityMap.metrics.roadlessBuildings > 0) ? 
+				`<li onClick="CityMap.highlightNoStreetBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.roadless')}, ${parseFloat(100*CityMap.metrics.roadlessBuildings/CityMap.metrics.buildings).toFixed(1)}%"><span><img src="${srcLinks.get(`/shared/gui/buffbar/buffbar_icon_buff_unconnected.png`,true)}" />${CityMap.metrics.roadlessBuildings}</span> <span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.roadlessBuildingsArea}</span></li>` : ``) +
+			((CityMap.metrics.gbgBuildings > 0) ? 
+				`<li onClick="CityMap.highlightGBGBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.buildingFromGBG')}, ${parseFloat(100*CityMap.metrics.gbgBuildings/CityMap.metrics.buildings).toFixed(1)}%"><span><img src="${srcLinks.get(`/cash_shop/gui/cash_shop_icon_navi_gbg_selected.png`,true)}" />${CityMap.metrics.gbgBuildings}</span> <span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.gbgArea}</span></li>` : ``) +
+			((CityMap.metrics.qiBuildings > 0) ? 
+				`<li onClick="CityMap.highlightQIBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.buildingFromQI')}, ${parseFloat(100*CityMap.metrics.qiBuildings/CityMap.metrics.buildings).toFixed(1)}%"><span><img src="${srcLinks.get(`/guild_raids/windows/guild_raids_guild_raid_emblem.png`,true)}" />${CityMap.metrics.qiBuildings}</span> <span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.qiArea}</span></li>` : ``) + 
 			
-			`<li onClick="CityMap.highlightDecayedBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.ShowDecayedBuildings')}, ${parseFloat(100*CityMap.metrics.fspDisabledBuildings/CityMap.metrics.buildings).toFixed(1)}%">
-			<span>
-			<img src="${srcLinks.get(`/shared/icons/limited_building_downgrade.png`,true)}" />${CityMap.metrics.decayedBuildings}
-			</span>
-			<span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.decayedBuildingsArea}</span></li>` +
-
-			`<li onClick="CityMap.highlightFspDisabledBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.ShowFspDisabledBuildings')}, ${parseFloat(100*CityMap.metrics.fspDisabledBuildings/CityMap.metrics.buildings).toFixed(1)}%">
-			<span>
-			<img src="${srcLinks.get(`/shared/icons/icon_fsp_disabled.png`,true)}" />${CityMap.metrics.fspDisabledBuildings}
-			<span class="openList" onclick="CityMap.buildingGroupList('fspDisabled')"><img src="${FH.extUrl}images/hud/open-eye.png"></span>
-			</span>
-			<span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.fspDisabledBuildingsArea}</span></li>`);
+			((CityMap.metrics.limitedBuildings > 0) ? 
+				`<li onClick="CityMap.highlightLimitedBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.limited')}, ${parseFloat(100*CityMap.metrics.limitedBuildings/CityMap.metrics.buildings).toFixed(1)}%"><span><img src="${srcLinks.get(`/shared/gui/upgrade/upgrade_icon_limited_building.png`,true)}" />${CityMap.metrics.limitedBuildings}<span class="openList" onclick="CityMap.buildingGroupList('limited')"><img src="${FH.extUrl}images/hud/open-eye.png"></span></span><span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.limitedBuildingsArea}</span></li>` : ``) +
+				
+			((CityMap.metrics.ascendableBuildings > 0) ? 
+				`<li onClick="CityMap.highlightAscendableBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.ShowAscendableBuildings')}, ${parseFloat(100*CityMap.metrics.ascendableBuildings/CityMap.metrics.buildings).toFixed(1)}%"><span><img src="${srcLinks.get(`/shared/icons/limited_building_upgrade.png`,true)}" />${CityMap.metrics.ascendableBuildings}<span class="openList" onclick="CityMap.buildingGroupList('acendable')"><img src="${FH.extUrl}images/hud/open-eye.png"></span></span><span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.ascendableBuildingsArea }</span></li>` : ``) +
+			
+			((CityMap.metrics.fspDisabledBuildings > 0) ? 
+				`<li onClick="CityMap.highlightDecayedBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.ShowDecayedBuildings')}, ${parseFloat(100*CityMap.metrics.fspDisabledBuildings/CityMap.metrics.buildings).toFixed(1)}%">
+				<span><img src="${srcLinks.get(`/shared/icons/limited_building_downgrade.png`,true)}" />${CityMap.metrics.decayedBuildings}</span>
+				<span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.decayedBuildingsArea}</span></li>` : ``) +
+			
+			((CityMap.metrics.fspDisabledBuildings > 0) ? 
+				`<li onClick="CityMap.highlightFspDisabledBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.ShowFspDisabledBuildings')}, ${parseFloat(100*CityMap.metrics.fspDisabledBuildings/CityMap.metrics.buildings).toFixed(1)}%">
+				<span>
+				<img src="${srcLinks.get(`/shared/icons/icon_fsp_disabled.png`,true)}" />${CityMap.metrics.fspDisabledBuildings}
+				<span class="openList" onclick="CityMap.buildingGroupList('fspDisabled')"><img src="${FH.extUrl}images/hud/open-eye.png"></span>
+				</span>
+				<span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.fspDisabledBuildingsArea}</span></li>` : ``)
+		);
 
 		areaStats.push('<li class="ratings clickable">')
 			areaStats.push(`<label for="show-worst-buildings"><input type="checkbox" id="show-worst-buildings" onclick="CityMap.highlightWorstBuildings()" /> ${FH.t('Boxes.CityMap.ShowWorstBuildings')}</label>`)
@@ -1139,8 +1143,8 @@ let CityMap = {
 		// let cityEfficiency = parseFloat(CityMap.metrics.connectedBuildingsArea / CityMap.metrics.roadsArea * 100).toFixed(0);
 		// areaStats.push('<p data-original-title="'+FH.t('Boxes.CityMap.CityGridScoreText')+'" class="text-center"><b>'+FH.t('Boxes.CityMap.CityGridScore')+':</b> '+cityEfficiency+'</p>');
 
-		$('.building-count-area').html(areaStats.join('')).promise().done(function() {
-			$('.building-count-area ul.highlight-map li').click(function(){
+		CityMap.find('.building-count-area').html(areaStats.join('')).promise().done(function() {
+			CityMap.find('.building-count-area ul.highlight-map li').click(function(){
 				$(this).toggleClass('active');
 			})
 		});
@@ -1159,7 +1163,7 @@ let CityMap = {
 			${CityMap.metrics.erasBehindBuildings}`
 		);
 
-		$('.too-old-legends').html(legends.join(''));
+		CityMap.find('.too-old-legends').html(legends.join(''));
 	},
 
 
@@ -1169,8 +1173,8 @@ let CityMap = {
 
 
 	highlightOldBuildings: ()=> {
-		$('.oldBuildings').toggleClass('diagonal');
-		$('.too-old-legends').slideToggle();
+		CityMap.find('.oldBuildings').toggleClass('diagonal');
+		CityMap.find('.too-old-legends').slideToggle();
 	},
 
 	highlightNotPolivatedBuildings: ()=> {
@@ -1182,24 +1186,24 @@ let CityMap = {
 	},
 
 	highlightNoStreetBuildings: ()=> {
-		$('.noStreet').toggleClass('highlight');
+		CityMap.find('.noStreet').toggleClass('highlight');
 	},
 
 	highlightAscendableBuildings: ()=> {
-		$('.ascendable').toggleClass('highlight2');
+		CityMap.find('.ascendable').toggleClass('highlight2');
 	},
 
 	hoverHighlightBuilding: (id, show) => {
 		$('#grid-outer').toggleClass('desaturate', show);
-		$(`.entity[data-id="${id}"]`).toggleClass('highlighted', show);
+		CityMap.find(`.entity[data-id="${id}"]`).toggleClass('highlighted', show);
 	},
 
 	highlightDecayedBuildings: ()=> {
-		$('.decayed').toggleClass('highlight3');
+		CityMap.find('.decayed').toggleClass('highlight3');
 	},
 
 	highlightFspDisabledBuildings: ()=> {
-		$('.fspDisabled').toggleClass('highlight5');
+		CityMap.find('.fspDisabled').toggleClass('highlight5');
 	},
 
 	highlightLimitedBuildings: ()=> {
@@ -1215,9 +1219,9 @@ let CityMap = {
 	},
 
 	highlightWorstBuildings: ()=> {
-		$('.rating10').toggleClass('highlight4');
-		$('.rating20').toggleClass('highlight4');
-		$('.rating30').toggleClass('highlight4');
+		CityMap.find('.rating10').toggleClass('highlight4');
+		CityMap.find('.rating20').toggleClass('highlight4');
+		CityMap.find('.rating30').toggleClass('highlight4');
 	},
 
 	buildingGroupList: async (type) => {

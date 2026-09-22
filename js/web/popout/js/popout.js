@@ -176,6 +176,9 @@ let Popout = {
 
 		win.document.body.appendChild(win.document.adoptNode(box));
 
+		// jQuery UI widgets inside the box still listen on the game document
+		Popout.rebindUiWidgets(box);
+
 		// the box may be removed while it lives in the pop-out
 		// (close button, CloseOpenBox(), MapActivityCheck, ...) => close the window with it
 		let observer = new MutationObserver(() => {
@@ -254,6 +257,9 @@ let Popout = {
 			}
 
 			entry.box.style.cssText = entry.style;
+
+			// before Resizeable(): the new resize handles of the box must not be rebuilt
+			Popout.rebindUiWidgets(entry.box);
 
 			if (args['dragdrop']) HTML.DragBox(document.getElementById(id), args['saveCords']);
 			if (args['resize']) HTML.Resizeable(id, args['keepRatio']);
@@ -533,6 +539,34 @@ let Popout = {
 			return window.eval(name);
 		} catch (e) {
 			return undefined;
+		}
+	},
+
+
+	// ------------------------------------------------------------ jQuery UI
+
+	/**
+	 * Recreates every widget where the cached document differs from the current one
+	 *
+	 * @param root element
+	 */
+	rebindUiWidgets: (root) => {
+		for (const name of ['draggable', 'droppable', 'sortable', 'selectable', 'resizable']) {
+			if (typeof $.fn[name] !== 'function') continue;
+
+			$(root).find('.ui-' + name).each(function () {
+				let el = $(this),
+					inst = el[name]('instance');
+
+				if (!inst || !inst.document || inst.document[0] === this.ownerDocument) return;
+
+				try {
+					let options = $.extend({}, inst.options);
+					el[name]('destroy')[name](options);
+				} catch (e) {
+					console.error(`Popout: could not rebind ${name}`, this, e);
+				}
+			});
 		}
 	},
 
