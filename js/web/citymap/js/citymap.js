@@ -2214,7 +2214,7 @@ let CityBuildings = {
 					for (let product of production.options) {
 						let resource = {
 							type: product.products[0].type,
-							needsMotivation: false,
+							needsMotivation: product.products[0].onlyWhenMotivated || false,
 							doubleWhenMotivated: true,
 							resources: product.products[0].playerResources?.resources, // breaks if buildings with guild resources or multiple productions are added
 							time: product.time
@@ -3059,8 +3059,8 @@ let CityBuildings = {
 
 		entity.rating = Productions.rateBuilding(entity);
 		
-		//if (entity.isLimited)
-		//	console.log('entity ', entity.name, entity, data);
+		//if (entity.type !== "street")
+		//	console.log('entity ', entity.name, entity, data, metaData);
 		return entity;
 	},
 };
