@@ -1891,7 +1891,7 @@ let CityBuildings = {
 		return metaData.is_special
 	},
 	
-	
+	// returns 0 when no street is required OR 1 or 2
 	needsStreet(metaData) {	
 		let needsStreet = metaData.requirements?.street_connection_level
 		if (needsStreet === undefined) {
@@ -1969,7 +1969,7 @@ let CityBuildings = {
 
 		let connected = (this.needsStreet(metaData, data) === 0)
 		if (!connected) 
-			connected = (data?.connected === 1)
+			connected = (data?.connected >= 1)
 		return connected
 	},
 	
