@@ -14,6 +14,7 @@
 - A Game Update added too many buildings and kits to the efficiency window
 - GBG VP Stats could break if a guild was renamed
 - GBG: Fixed memory leaks
+- Production Overview: Buildings connected by a two-lane-road weren't listed anymore
 
 ---
  

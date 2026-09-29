@@ -14,6 +14,7 @@
 - Ein Spiel-Update hat dafür gesorgt, dass zu viele Gebäude und Kits im Effizienzrechner angezeigt wurden
 - GG Siegpunkte Statistik konnte kaputt gehen, wenn eine Gilde sich umbenannt hat
 - GG: Memory Leaks gefixt
+- Produktionsübersicht: Gebäude, die über eine 2x2 Straße verbunden waren, wurden nicht mehr aufgelistet
 
 ---
  
