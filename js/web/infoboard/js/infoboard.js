@@ -83,7 +83,8 @@ let Infoboard = {
                 resize: true,
                 minimize: true,
                 speaker: 'infoboxTone',
-                settings: Infoboard.ShowSettings
+                settings: Infoboard.ShowSettings,
+                popout: {w:500,h:600}
             });
             FH.HTML.AddCssFile('infoboard');
 

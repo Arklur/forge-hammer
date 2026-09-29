@@ -1,5 +1,22 @@
 # Changelog
  
+## Version 1.8.0
+### New
+- New color for the windows: Galactic Horizon
+- Notifications for (cultural) settlements and QI: create a notification for collectable productions or finished buildings with one click
+
+### Update
+- GBG: Alle Timer angepasst, damit sie besser zur Zeit im Spiel passen
+- City Overview, BG Helper and Info Box can now be opened in a seperate window
+- City Overview: Grid view is now also available for your stellar city
+
+### Bug Fixes
+- A Game Update added too many buildings and kits to the efficiency window
+- GBG VP Stats could break if a guild was renamed
+- GBG: Fixed memory leaks
+
+---
+ 
 ## Version 1.7.0
 ### New
 - New window color added: Oceanic

@@ -2523,9 +2523,17 @@
     "s": "Monety",
     "r": "Coins"
   },
+  "General.Collection": {
+    "s": "Zbiory",
+    "r": "Collection"
+  },
   "General.Construction": {
-    "s": "Budownictwo",
+    "s": "Budowa",
     "r": "Construction"
+  },
+  "General.cultural_outpost": {
+    "s": "Osada",
+    "r": "Cultural Settlement"
   },
   "General.Date": "Data",
   "General.DefAttacker": {
@@ -2541,6 +2549,10 @@
     "r": "Details"
   },
   "General.Disclaimer": "Zastrzeżenie",
+  "General.Efficiency": {
+    "s": "Wydajność",
+    "r": "Efficiency"
+  },
   "General.Error": {
     "s": "Błąd",
     "r": "Error"
@@ -2561,6 +2573,10 @@
   "General.Good": "Towar",
   "General.Goods": "Towary",
   "General.Guild": "Gildia",
+  "General.guild_raids": {
+    "s": "Najazdy kwantowe",
+    "r": "Quantum Incursions"
+  },
   "General.Inventory": {
     "s": "Inwentarz",
     "r": "Inventory"
@@ -2601,6 +2617,10 @@
   "General.Space": {
     "s": "Powierzchnia",
     "r": "Space"
+  },
+  "General.stellar_city": {
+    "s": "Gwiezdne miasto",
+    "r": "Stellar City"
   },
   "General.Success": {
     "s": "Sukces",

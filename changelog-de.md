@@ -1,5 +1,22 @@
 # Changelog
  
+## Version 1.8.0
+### Neu
+- Neue Farbe für die Fenster: Galactic Horizon
+- Benachrichtigungen für Siedlungen, QI, Raumfahrt-Außenposten: Lass dich mit einem Klick über fertiggestellte Gebäude oder Produktionen benachrichtigen
+
+### Update
+- GG: Alle Timer angepasst, damit sie besser zur Zeit im Spiel passen
+- Stadtübersicht, BG Helfer und Infobox können jetzt auch in einem separaten Fenster geöffnet werden
+- Stadtübersicht: jetzt auch für die Stellare Kolonie
+
+### Bug Fixes
+- Ein Spiel-Update hat dafür gesorgt, dass zu viele Gebäude und Kits im Effizienzrechner angezeigt wurden
+- GG Siegpunkte Statistik konnte kaputt gehen, wenn eine Gilde sich umbenannt hat
+- GG: Memory Leaks gefixt
+
+---
+ 
 ## Version 1.7.0
 ### Neu
 - Neue Farbe für die Fenster: Oceanic

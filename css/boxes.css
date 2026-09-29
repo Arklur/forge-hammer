@@ -121,7 +121,7 @@ a[target="_blank"] svg {
 }
 
 .dropdown ul li:hover{
-	background-color: var(--table-bg-hover);
+	background-color: var(--bg-medium);
 	color: var(--text-dark);
 }
 
