@@ -37,7 +37,8 @@ window.PlannerApp = window.PlannerApp || {};
         SpaceAgeJupiterMoon: 20, 
         SpaceAgeTitan: 21, 
         SpaceAgeSpaceHub: 22, 
-        NextEra: 23
+        StellarAgeDiscovery: 23,
+        NextEra: 24
     };
 
 
