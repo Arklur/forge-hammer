@@ -210,6 +210,17 @@
 	left: 0;
 }
 
+#OwnPartBox table.foe-table {
+	border-top: 2px solid transparent;
+}
+
+#OwnPartBox .gbTier-silver table.foe-table {
+	border-top: 2px solid var(--silver);
+}
+#OwnPartBox .gbTier-gold table.foe-table {
+	border-top: 2px solid var(--golden);
+}
+
 #gbCosts tr th span {
 	display: inline-block;
 	width: 25px;

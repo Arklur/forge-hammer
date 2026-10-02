@@ -217,7 +217,7 @@ let Calculator = {
 		const totalFP = FH.Main.CurrentGB.Entity.state.forge_points_for_level_up;
 		const remainingFP = totalFP - currentFP;
 
-		const ranks = []; // Each entry: { donorState, safeState, fpNetReward, fpGrossReward, bpReward, medalReward, donorFpReward, donorRankCost, safeRankCost, contribution }
+		const ranks = [];
 
 		let bestProfit = -999999,
 			lastSafeRankCost = undefined;

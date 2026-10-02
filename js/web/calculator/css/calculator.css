@@ -18,10 +18,6 @@
 	color: var(--text-highlight);
 }
 
-#gbCalc table.foe-table {
-	margin-top: 2px;
-}
-
 #gbCalc tr th {
 	text-align: center;
 }

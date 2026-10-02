@@ -847,7 +847,7 @@ let Parts = {
 		let printsEnabled = (FH.Storage.getItem('OwnPartShowBP') ?? 'true') === 'true';
 		let minView = (FH.Storage.getItem('OwnPartMinView') ?? 'false') === 'true';
 
-		h.push(`<table id="OwnPartTable" class="foe-table text-smaller slim" style="margin-top:2px">
+		h.push(`<table id="OwnPartTable" class="foe-table text-smaller slim">
 			<thead>
 			<tr>
 				<th class="text-smaller">${FH.t('Boxes.OwnpartCalculator.Order')}</th>
