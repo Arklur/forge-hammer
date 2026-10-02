@@ -639,6 +639,10 @@ let Parts = {
 
 						// Blueprints
 						let BlueprintCount = (FH.Main.CurrentGB.Rankings[i]['reward']['blueprints'] !== undefined ? parseInt(FH.Main.CurrentGB.Rankings[i]['reward']['blueprints']) : 0);
+						if (FH.Main.CurrentGB.Rankings[i].reward.blueprintRewards?.length > 1) {
+							let last = FH.Main.CurrentGB.Rankings[i].reward.blueprintRewards.length - 1;
+							BlueprintCount = FH.Main.CurrentGB.Rankings[i].reward.blueprintRewards[last].amount;
+						}
 						BPRewards[Place] = FH.Main.round(BlueprintCount * arcs[Place]);
 						if (BPRewards[Place] === undefined) BPRewards[Place] = 0;
 					}
@@ -768,7 +772,10 @@ let Parts = {
 		if (PlayerID === FH.Player.ID && FH.Main.CityMapData[FH.Main.CurrentGB.Entity.id]?.level === FH.Main.CityMapData[FH.Main.CurrentGB.Entity.id]?.max_level) {
 			h.push('<div class="lg-not-possible" data-text="'+FH.t('Boxes.Calculator.LGNotOpen')+'"></div>');
 		}
-		h.push(`<div id="gbCosts">`);
+
+		let Tier = FH.Main.CurrentGB.Entity.tier;
+
+		h.push(`<div id="gbCosts" class="gbTier-${Tier}">`);
 
 		h.push(`<div class="dark-bg header text-center p5">
 			<div class="flex gap" style="justify-content:space-between;align-items:center;margin-bottom:5px;">

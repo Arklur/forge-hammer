@@ -38,6 +38,16 @@
 	background-size: contain;
 }
 
+#gbCalc.gbTier-silver tr th span.blueprint {
+	background: url(../../x_img/blueprint_silver.png) center no-repeat;
+	background-size: contain;
+}
+
+#gbCalc.gbTier-gold tr th span.blueprint {
+	background: url(../../x_img/blueprint_gold.png) center no-repeat;
+	background-size: contain;
+}
+
 #gbCalc tr th span.medal {
 	background: url(../../x_img/medal.png) center no-repeat;
 	background-size: contain;
@@ -59,6 +69,10 @@
 
 #gbCalc strong.success {
 	color: var(--success);
+}
+
+#gbCalc .bpTier.silver {
+	font-weight: bold;
 }
 
 #gbCalc .text-grey,

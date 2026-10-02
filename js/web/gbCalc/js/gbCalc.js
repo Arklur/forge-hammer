@@ -40,6 +40,7 @@
                 GBList[id].state.forge_points_for_level_up = x.max_progress;
                 GBList[id].level = x.level;
                 GBList[id].max_level = x.maxLevel || GBList[id].max_level;
+                GBList[id].tier = x.currentTier?.value || 'copper';
             }
         })
 	});

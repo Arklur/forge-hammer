@@ -222,6 +222,16 @@
 	background-size: 85%;
 }
 
+#gbCosts.gbTier-silver tr th span.blueprint {
+	background: url(../../x_img/blueprint_silver.png) center no-repeat;
+	background-size: contain;
+}
+
+#gbCosts.gbTier-gold tr th span.blueprint {
+	background: url(../../x_img/blueprint_gold.png) center no-repeat;
+	background-size: contain;
+}
+
 #gbCosts tr th span.medal {
 	background: url(../../x_img/medal.png) center no-repeat;
 	background-size: 65%;
