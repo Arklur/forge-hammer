@@ -60,7 +60,6 @@ FH.proxy.addHandler('RankingService', 'searchRanking', (data, postData) => {
 FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
 	GuildFights.init();
 	GuildFights.CurrentGBGRound = data.responseData.endsAt;
-	GuildFights.isFinalDay = GuildFights.CurrentGBGRound - moment().unix() <= 86400;
 
 	if (GuildFights.curDateFilter === null || GuildFights.curDateEndFilter === null) {
 		GuildFights.curDateFilter = moment.unix(GuildFights.CurrentGBGRound).subtract(11, 'd').format('YYYYMMDD');
@@ -146,8 +145,6 @@ let GuildFights = {
 	discordCache: null,
 
 	Chart: undefined,
-
-	isFinalDay: false,
 
 	Tabs: [],
 	TabsContent: [],
@@ -610,7 +607,9 @@ let GuildFights = {
 				points: rank.victoryPointsTotal || 0
 			}
 		});
-		if (GuildFights.isFinalDay && (GuildFights.PlayerBoxSettings.showOverflowWarning ?? true)) {
+		let timeleft = GuildFights.CurrentGBGRound - moment().unix(),
+			isFinalDay = timeleft > 0 && timeleft <= 86400 ;
+		if (isFinalDay && (GuildFights.PlayerBoxSettings.showOverflowWarning ?? true)) {
 			GuildFights.CheckOverflow(rankingData);
 		}
 		let historyData = guildHistoryData.map(({ flag, ...data }) => data);
