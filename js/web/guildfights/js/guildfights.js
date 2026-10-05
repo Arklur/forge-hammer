@@ -610,7 +610,7 @@ let GuildFights = {
 				points: rank.victoryPointsTotal || 0
 			}
 		});
-		if (GuildFights.isFinalDay && (GuildFights.PlayerBoxSettings.showOverflowWarning || true)) {
+		if (GuildFights.isFinalDay && (GuildFights.PlayerBoxSettings.showOverflowWarning ?? true)) {
 			GuildFights.CheckOverflow(rankingData);
 		}
 		let historyData = guildHistoryData.map(({ flag, ...data }) => data);
@@ -2096,7 +2096,7 @@ let GuildFights = {
 	ShowPlayerBoxSettings: () => {
 		let c = [];
 		let Settings = GuildFights.PlayerBoxSettings;
-
+		c.push(``)
 		c.push(`<p>${FH.t('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="FH.HTML.ExportTable($('#GuildPlayersTable'),'csv','GBG-PlayerList')" title="${FH.HTML.Tooltip(FH.t('Boxes.General.ExportCSV'))}">CSV</button>`);
 		c.push(`<button class="btn" onclick="FH.HTML.ExportTable($('#GuildPlayersTable'),'json','GBG-PlayerList')" title="${FH.HTML.Tooltip(FH.t('Boxes.General.ExportJSON'))}">JSON</button></span></p>`);
 
