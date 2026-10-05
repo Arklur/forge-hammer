@@ -450,7 +450,8 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 
 	// QI map
-	FH.proxy.addHandler('GuildRaidsMapService', 'getOverview', (data, postData) => {		
+	FH.proxy.addHandler('GuildRaidsMapService', 'getOverview', (data, postData) => {
+		$('#alertcountdown').remove();	
 		QiProgress.QiMap = data.responseData;
 	})
 

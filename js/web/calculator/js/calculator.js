@@ -93,8 +93,9 @@ let Calculator = {
 		let BuildingName = FH.Main.CityEntities[FH.Main.CurrentGB.Entity['cityentity_id']]['name'];
 		let Level = (FH.Main.CurrentGB.Entity.level || 0);
 		let MaxLevel = (FH.Main.CurrentGB.Entity.max_level || 0);
+		let Tier = FH.Main.CurrentGB.Entity.tier;
 
-		h.push(`<div id="gbCalc">
+		h.push(`<div id="gbCalc" class="gbTier-${Tier}">
 				<div class="header text-center dark-bg p5">
 					<h1>${BuildingName}</h1>
 					<div class="gbLevels">${Level} &rarr; ${(Level + 1)} &middot; ${FH.t('Boxes.Calculator.MaxLevel')}: ${MaxLevel}</div>`);
@@ -216,7 +217,7 @@ let Calculator = {
 		const totalFP = FH.Main.CurrentGB.Entity.state.forge_points_for_level_up;
 		const remainingFP = totalFP - currentFP;
 
-		const ranks = []; // Each entry: { donorState, safeState, fpNetReward, fpGrossReward, bpReward, medalReward, donorFpReward, donorRankCost, safeRankCost, contribution }
+		const ranks = [];
 
 		let bestProfit = -999999,
 			lastSafeRankCost = undefined;
@@ -235,6 +236,7 @@ let Calculator = {
 				fpNetReward:   0,
 				fpGrossReward: 0,
 				bpReward:      0,
+				bpTier:		   'copper',
 				medalReward:   0,
 				donorFpReward: 0,
 				donorRankCost: undefined,
@@ -247,8 +249,14 @@ let Calculator = {
 			if (entry.reward.strategy_point_amount !== undefined)
 				rank.fpNetReward = FH.Main.round(entry.reward.strategy_point_amount);
 
-			if (entry.reward.blueprints !== undefined)
+			if (entry.reward.blueprints !== undefined) {
 				rank.bpReward = FH.Main.round(entry.reward.blueprints);
+				if (entry.reward.blueprintRewards.length > 1) {
+					let last = entry.reward.blueprintRewards.length - 1;
+					rank.bpReward = entry.reward.blueprintRewards[last].amount;
+					rank.bpTier = entry.reward.blueprintRewards[last].tier.value;
+				}
+			}
 
 			if (entry.reward.resources?.medals !== undefined)
 				rank.medalReward = FH.Main.round(entry.reward.resources.medals);
@@ -485,7 +493,7 @@ let Calculator = {
 				<td>
 					<strong class="${profitClass} td-tooltip copy-fp" data-copy="${donorProfit}" data-original-title="${FH.HTML.Tooltip(profitTooltip.join('<br>'))}">${profitText}</strong>
 				</td>
-				<td> ${FH.HTML.Format(rank.bpReward)} </td>
+				<td class="bpTier ${rank.bpTier}"> ${FH.HTML.Format(rank.bpReward)} </td>
 				<td> <small> ${FH.HTML.Format(rank.medalReward)} </small> </td>
 			</tr>`);
 		}

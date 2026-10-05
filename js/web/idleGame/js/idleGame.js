@@ -687,7 +687,7 @@ let idleGame = {
 		let tNB = t(amount, da, fest, df, stock, ds)
 		
 		let time = `<span ${(t0.t > tNB.t) ? 'data-original-title="' + tf(tNB)+'<br>' + FH.t("Boxes.idleGame.noBottleneck")+'"':''}>${tf(t0)}</span>`		
-		time += (t0.h < 24) ? ` <img class="clickable" data-original-title="${FH.t("Boxes.idleGame.SetTimer")}" src="${srcLinks.get("/shared/gui/plus_offer/plus_offer_time.png", true)}" alt="" onclick="idleGame.addAlert(${t0.h},${t0.m})">` : ``
+		time += (t0.h < 24) ? ` <img class="clickable" data-original-title="${FH.t("Boxes.idleGame.SetTimer")}" src="${FH.extUrl+`images/menu/alerts.png`}" alt="" onclick="idleGame.addAlert(${t0.h},${t0.m})">` : ``
 		return time;
 	},
 
