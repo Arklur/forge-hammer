@@ -60,6 +60,7 @@ FH.proxy.addHandler('RankingService', 'searchRanking', (data, postData) => {
 FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
 	GuildFights.init();
 	GuildFights.CurrentGBGRound = data.responseData.endsAt;
+	GuildFights.isFinalDay = GuildFights.CurrentGBGRound - moment().unix() <= 86400;
 
 	if (GuildFights.curDateFilter === null || GuildFights.curDateEndFilter === null) {
 		GuildFights.curDateFilter = moment.unix(GuildFights.CurrentGBGRound).subtract(11, 'd').format('YYYYMMDD');
@@ -145,6 +146,8 @@ let GuildFights = {
 	discordCache: null,
 
 	Chart: undefined,
+
+	isFinalDay: false,
 
 	Tabs: [],
 	TabsContent: [],
@@ -271,6 +274,34 @@ let GuildFights = {
 		}
 	},
 
+	CheckOverflow:(d) => {
+		let rewards = [];
+		for (let rank of d) {
+			if (rank.clan.id!=FH.Guild.ID) continue
+			rewards = rank.reward.playerRewards;
+			break;
+		}
+		let warn = {};
+		for (let r of rewards) {
+			let id = r.subType;
+			let cap = FH.Goods.Data[id]?.abilities?.resourceCap?.amount;
+			if (!cap) continue;
+			if (cap < r.amount + (FH.RessourceStock[id] || 0))
+				warn[id] = r.amount + (FH.RessourceStock[id] || 0) - cap;
+		}
+		if (Object.keys(warn).length == 0) return;
+		let div = $(`
+			<div id="GBGSeasonOverflow">
+				<h2>${FH.t('Boxes.GBGSeasonOverflow.Title')}</h2>
+				<p>${FH.t('Boxes.GBGSeasonOverflow.Text')}</p>
+				${Object.keys(warn).map(id => `<p>${srcLinks.icons(id)} ${FH.HTML.FormatNumberShort(warn[id])}</p>`).join('')}
+			</div>
+		`);
+		$('#GBGSeasonOverflow').remove();
+		$('body').append(div);
+		$('#GBGSeasonOverflow').delay(5000).fadeOut(1000);
+		
+	},
 
 	HandleSignals: async (data = null) => {
 		GuildFights.SetSignals(data);
@@ -579,7 +610,9 @@ let GuildFights = {
 				points: rank.victoryPointsTotal || 0
 			}
 		});
-
+		if (GuildFights.isFinalDay && (GuildFights.PlayerBoxSettings.showOverflowWarning || true)) {
+			GuildFights.CheckOverflow(rankingData);
+		}
 		let historyData = guildHistoryData.map(({ flag, ...data }) => data);
 
 		await GuildFights.UpdateDB('guildHistory', guildHistoryData);
@@ -595,6 +628,7 @@ let GuildFights = {
 			);
 			GuildFights.GBGRoundGuilds = null;
 		}
+
 	},
 
 
@@ -2062,6 +2096,7 @@ let GuildFights = {
 	ShowPlayerBoxSettings: () => {
 		let c = [];
 		let Settings = GuildFights.PlayerBoxSettings;
+
 		c.push(`<p>${FH.t('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="FH.HTML.ExportTable($('#GuildPlayersTable'),'csv','GBG-PlayerList')" title="${FH.HTML.Tooltip(FH.t('Boxes.General.ExportCSV'))}">CSV</button>`);
 		c.push(`<button class="btn" onclick="FH.HTML.ExportTable($('#GuildPlayersTable'),'json','GBG-PlayerList')" title="${FH.HTML.Tooltip(FH.t('Boxes.General.ExportJSON'))}">JSON</button></span></p>`);
 

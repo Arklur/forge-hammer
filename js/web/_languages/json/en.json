@@ -481,6 +481,8 @@
   "Boxes.GBGBuildings.title": "Building Recommendation",
   "Boxes.GBGBuildings.toBuild": "To Build",
   "Boxes.GBGBuildings.totalChance": "Chance",
+  "Boxes.GBGSeasonOverflow.Title": "Season Reward will overflow your capacity",
+  "Boxes.GBGSeasonOverflow.Text": "Spend at least:",
   "Boxes.General.AutoOpen": "Open automatically",
   "Boxes.General.Cancel": "Cancel",
   "Boxes.General.ConfirmDelete": "Confirm delete:",

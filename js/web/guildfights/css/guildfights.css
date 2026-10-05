@@ -369,3 +369,21 @@
 	height: 48px;
 	overflow: auto;
 }
+
+
+/*************************/
+
+#GBGSeasonOverflow {
+    position: absolute;
+    top: 35px;
+    right: 161px;
+    width: 343px;
+    z-index: 999;
+    border: var(--border-medium),4px,solid;
+	border-radius: 10px;
+    background: var(
+    --bg-darkest);
+    padding: 5px;
+    color: var(
+    --game-text-light);
+}
