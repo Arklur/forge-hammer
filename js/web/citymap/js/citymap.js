@@ -168,7 +168,8 @@ let CityMap = {
 					result[result.length - 1] = item;
 				}
 				else {
-					result.push(item);
+					if (item.state.next_state_transition_in > 60) // ignore production times of 1min or less
+						result.push(item);
 				}
 			}
 			return result;
