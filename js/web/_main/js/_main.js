@@ -1723,6 +1723,7 @@ let Main = {
 		rarities:null,
 		names:null,
 		buildingBoostSums:[],
+		rarityOrder: [],
 
 		getAllies:(allies)=>{
 			Main.Allies.allyList = Object.assign({}, ...allies.map(a=>({[a.id]:a})));
@@ -1785,6 +1786,7 @@ let Main = {
 
 		setRarities:(raw)=>{
 			Main.Allies.rarities=Object.assign({}, ...raw.map(r=>({[r.id.value]:r})))
+			Main.Allies.rarityOrder = Object.keys(Main.Allies.rarities);
 		},
 
 		setTypes:(raw)=>{
@@ -1829,7 +1831,7 @@ let Main = {
 		},
 
 		updateAllyList:()=>{
-			Main.Allies.buildingBoostSums=[]	
+			Main.Allies.buildingBoostSums=[]
 			if ($('#AllyList').length === 0) return;
 			let buildings = Object.assign({},...Object.values(Main.CityMapData).map(x=>({id:x.id,metaID:x.cityentity_id,rooms:structuredClone(Main.CityEntities[x.cityentity_id]?.components?.AllAge?.ally?.rooms)})).filter(x=>x.rooms!==undefined).map(x=>({[x.id]:x})))
 			let rooms = {}
@@ -1866,7 +1868,7 @@ let Main = {
 					rooms[0+"#" + unassigned] = {
 						allyRarity: x.rarity?.value || "",
 						allyLevel: x.level || null,												
-						allyBoosts: x.currentLevel?.boosts || x.boosts || null,
+						allyBoosts: Main.Allies.meta[x.allyId]?.allyBoosts || x.boosts || null,
 						allyName: Main.Allies.meta[x.allyId]?.name || "",
 					}
 					unassigned++
@@ -1874,13 +1876,18 @@ let Main = {
 			})
 			Object.values(buildings).forEach(b=>{
 				for (let [i,r] of Object.entries(b.rooms)) {
+					let rarityIndex = Main.Allies.rarityOrder.indexOf(r.ally?.rarity?.value);
+					let boosts = [];
+					for (let j = 0; j <= rarityIndex; j++) {
+						boosts.push(Main.Allies.meta[r.ally?.allyId]?.rarityInfo[j].rarityBoosts[0].boost[r.ally?.level]);
+					}
 					rooms[b.id+"#" + i] = {
 						buildingName: Main.CityEntities[b.metaID].name,
 						buildingMeta:b.metaID,
 						roomRarity: r.rarity?.value || Object.keys(Main.Allies.rarities).join("#"),
 						allyRarity: r.ally?.rarity?.value || "",
 						allyLevel: r.ally?.level || null,												
-						allyBoosts: r.ally?.currentLevel?.boosts || r.ally?.boosts || null,
+						allyBoosts: boosts || null,
 						allyName: Main.Allies.meta[r.ally?.allyId]?.name || "",
 					}
 				}
@@ -1918,11 +1925,10 @@ let Main = {
 				</thead>
 				<tbody class="ally-list">`;
 
-			const rarityOrder = Object.keys(Main.Allies.rarities);
-			const sortRank = (r) => rarityOrder.indexOf(r.allyRarity) + (r.buildingName?10:0) + (r.fragmentsAmount?100:0);
+			const sortRank = (r) => Main.Allies.rarityOrder.indexOf(r.allyRarity) + (r.buildingName?10:0) + (r.fragmentsAmount?100:0);
 			let sortedRooms = Object.entries(rooms).sort((a,b) => sortRank(a[1]) - sortRank(b[1]));
 				
-			for (let [roomId,r] of sortedRooms){
+			for (let [roomId,r] of sortedRooms) {
 				let buildingId=roomId.split("#")[0]
 				let rarities=r.roomRarity?.split("#")||[]
 				rarities.push(r.allyRarity)
