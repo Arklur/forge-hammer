@@ -1799,6 +1799,12 @@ let Main = {
 			ally.name=Main.Allies.meta[ally.allyId]?.name
 			ally.typeName=Main.Allies.types[ally.type]?.name
 			ally.type=Main.Allies.meta[ally.allyId]?.allyType
+			let r=0;
+			do {
+				ally.currentLevel.boosts = (ally.currentLevel.boosts||[]).concat((Main.Allies.meta[ally.allyId]?.rarityInfo[r]?.rarityBoosts || []).map(x=>x.boost[ally.level]));
+				r++;
+			} while (Main.Allies.meta[ally.allyId]?.rarityInfo[r-1]?.rarity.value != ally.rarity && r<Main.Allies.meta[ally.allyId]?.rarityInfo.length)
+
 			return ally
 		},
 
