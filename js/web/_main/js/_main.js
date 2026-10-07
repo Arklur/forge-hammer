@@ -1794,9 +1794,7 @@ let Main = {
 		},
 
 		getAllieData:(id)=>{
-			let ally = null;
-			if (isNum(id)) 
-				ally = structuredClone(Main.Allies.allyList[id]);
+			let ally = structuredClone(Main.Allies.allyList[id]);
 			ally.rarity=ally.rarity.value;
 			ally.name=Main.Allies.meta[ally.allyId]?.name;
 			ally.typeName=Main.Allies.types[ally.type]?.name;
