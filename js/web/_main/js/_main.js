@@ -1794,18 +1794,26 @@ let Main = {
 		},
 
 		getAllieData:(id)=>{
-			let ally = structuredClone(Main.Allies.allyList[id])
-			ally.rarity=ally.rarity.value
-			ally.name=Main.Allies.meta[ally.allyId]?.name
-			ally.typeName=Main.Allies.types[ally.type]?.name
-			ally.type=Main.Allies.meta[ally.allyId]?.allyType
-			let r=0;
-			do {
-				ally.currentLevel.boosts = (ally.currentLevel.boosts||[]).concat((Main.Allies.meta[ally.allyId]?.rarityInfo[r]?.rarityBoosts || []).map(x=>x.boost[ally.level]));
-				r++;
-			} while (Main.Allies.meta[ally.allyId]?.rarityInfo[r-1]?.rarity.value != ally.rarity && r<Main.Allies.meta[ally.allyId]?.rarityInfo.length)
+			let ally = null;
+			if (isNum(id)) 
+				ally = structuredClone(Main.Allies.allyList[id]);
+			ally.rarity=ally.rarity.value;
+			ally.name=Main.Allies.meta[ally.allyId]?.name;
+			ally.typeName=Main.Allies.types[ally.type]?.name;
+			ally.type=Main.Allies.meta[ally.allyId]?.allyType;
+			ally.currentLevel.boosts = Main.Allies.getAllyBoosts(ally.allyId,ally.level,ally.rarity)
 
 			return ally
+		},
+
+		getAllyBoosts:(id,level,rarity)=>{
+			let r=0;
+			let boosts = [];
+			do {
+				boosts = boosts.concat((Main.Allies.meta[id]?.rarityInfo[r]?.rarityBoosts || []).map(x=>x.boost[level]));
+				r++;
+			} while (Main.Allies.meta[id]?.rarityInfo[r-1]?.rarity.value != rarity && r<Main.Allies.meta[id]?.rarityInfo.length)
+			return boosts;
 		},
 
 		showAllyList:(closeIfOpen = false)=>{
@@ -1874,7 +1882,7 @@ let Main = {
 					rooms[0+"#" + unassigned] = {
 						allyRarity: x.rarity?.value || "",
 						allyLevel: x.level || null,												
-						allyBoosts: Main.Allies.meta[x.allyId]?.allyBoosts || x.boosts || null,
+						allyBoosts: Main.Allies.getAllyBoosts(x.allyId, x.level, x.rarity.value||"") || null,
 						allyName: Main.Allies.meta[x.allyId]?.name || "",
 					}
 					unassigned++
@@ -1882,18 +1890,13 @@ let Main = {
 			})
 			Object.values(buildings).forEach(b=>{
 				for (let [i,r] of Object.entries(b.rooms)) {
-					let rarityIndex = Main.Allies.rarityOrder.indexOf(r.ally?.rarity?.value);
-					let boosts = [];
-					for (let j = 0; j <= rarityIndex; j++) {
-						boosts.push(Main.Allies.meta[r.ally?.allyId]?.rarityInfo[j].rarityBoosts[0].boost[r.ally?.level]);
-					}
 					rooms[b.id+"#" + i] = {
 						buildingName: Main.CityEntities[b.metaID].name,
 						buildingMeta:b.metaID,
 						roomRarity: r.rarity?.value || Object.keys(Main.Allies.rarities).join("#"),
 						allyRarity: r.ally?.rarity?.value || "",
 						allyLevel: r.ally?.level || null,												
-						allyBoosts: boosts || null,
+						allyBoosts: Main.Allies.getAllyBoosts(r.ally?.allyId, r.ally?.level, r.ally?.rarity?.value||"") || null,
 						allyName: Main.Allies.meta[r.ally?.allyId]?.name || "",
 					}
 				}
@@ -1905,7 +1908,7 @@ let Main = {
 					fragmentsNeeded: x.item.reward.requiredAmount,
 					allyRarity: x.item.reward.assembledReward.rarity?.value || "",
 					allyLevel: x.item.reward.assembledReward.level || null,												
-					allyBoosts: x.item.reward.assembledReward.boosts || null,
+					allyBoosts: Main.Allies.getAllyBoosts(x.item.reward.assembledReward.subType, x.item.reward.assembledReward.level, x.item.reward.assembledReward.rarity?.value||"") || null,
 					allyName: x.item.reward.assembledReward.name,
 				}
 				unassigned++
