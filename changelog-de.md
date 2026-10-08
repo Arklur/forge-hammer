@@ -1,5 +1,16 @@
 # Changelog
  
+## Version 1.8.1
+### Update
+- LG Rechner: Auf dem Beta-Server werden jetzt nur noch Gold-BP angezeigt statt die Summe aller BP, außerdem ein paar weitere Level für das Siphon hinzugefügt
+- GG Währungswarnung: In den letzten 24 Stunden einer Runde wird anhand des Platz deiner Gilde angezeigt, ob du noch Münzen ausgeben solltest
+
+### Bug Fixes
+- Ein Spiel-Update hat die Verbündeten-Boosts verändert und es wurden keine mehr angezeigt
+- Stadtplaner: Das neuste Zeitalter war hier noch nicht hinzugefügt, weshalb manche Berechnungen falsch waren
+ 
+---
+
 ## Version 1.8.0
 ### Neu
 - Neue Farbe für die Fenster: Galactic Horizon
