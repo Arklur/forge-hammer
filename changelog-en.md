@@ -1,12 +1,23 @@
 # Changelog
  
+## Version 1.8.1
+### Update
+- GB Calculatior: Only shows the amount of the highest tier blueprints on beta now; also added more Siphon levels
+- GBG Currency Overflow: Will display in the last 24 hours of the season when you need to spend currency before it ends
+
+### Bug Fixes
+- Allies: A game update made the boosts disappear
+- City Planner: The latest era was still missing, so calculations were off
+ 
+---
+ 
 ## Version 1.8.0
 ### New
 - New color for the windows: Galactic Horizon
 - Notifications for (cultural) settlements and QI: create a notification for collectable productions or finished buildings with one click
 
 ### Update
-- GBG: Alle Timer angepasst, damit sie besser zur Zeit im Spiel passen
+- GBG: Adjusted all timers so there is less delay
 - City Overview, BG Helper and Info Box can now be opened in a seperate window
 - City Overview: Grid view is now also available for your stellar city
 
