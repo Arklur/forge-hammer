@@ -728,7 +728,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		setTimeout(()=>{
 			Main.CurrentGB.Entity = FH.GBCalc.getGB(playerId, entityId);
 	
-			let Level = (level + !! contribution) || Main.CurrentGB.Entity.level + 1
+			let Level = (level + !! contribution) || Main.CurrentGB.Entity?.level || 0 + 1
 
 			Main.CurrentGB.isPreviousLevel = Level <= Main.CurrentGB.Entity.level;
 			Parts.IsPreviousLevel = Main.CurrentGB.isPreviousLevel;
