@@ -1,12 +1,12 @@
 # Changelog
  
-## Version 1.8.1
+## Version 1.8.2
 ### Update
 - GB Calculatior: Only shows the amount of the highest tier blueprints on beta now; also added more Siphon levels
 - GBG Currency Overflow: Will display in the last 24 hours of the season when you need to spend currency before it ends
 
 ### Bug Fixes
-- Allies: A game update made the boosts disappear
+- Allies: A game update made the boosts disappear from the list and all calculations
 - City Planner: The latest era was still missing, so calculations were off
  
 ---
