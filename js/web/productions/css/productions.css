@@ -410,7 +410,7 @@
 #ProductionsRatingBody tr.highlighted2 td, #ProductionsRatingBody tr.highlighted td {
 	background: var(--table-bg-highlight);
 }
-#ProductionsRatingBody tr td.ally:nth-child(2) span:nth-child(2)::after, #ProductionsRatingBody tr span.inventory::after, #Productions td.ally::after {
+#ProductionsRatingBody tr td.ally:nth-child(2) span:nth-child(2)::after, #ProductionsRatingBody tr span.inventory::after, #Productions td.ally::after, #Productions span.ally::after {
 	content: ' ';
 	background: url('../../x_img/ally.png') no-repeat center;
 	background-size: contain;

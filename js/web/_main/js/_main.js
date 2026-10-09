@@ -1769,12 +1769,13 @@ let Main = {
 		},
 
 		getProd:(CityMapId) => {
-			let M = Main.Allies
-			if (!M.buildingList?.[CityMapId]) return null
+			let M = Main.Allies;
+			if (!M.buildingList?.[CityMapId]) return null;
 			let prod={}
 			Object.values(M.buildingList[CityMapId]).forEach(id=> {
-				let a=M.allyList[id]
-				if (a.currentLevel?.boosts || a.boosts) prod.boosts = (prod.boosts||[]).concat(a.currentLevel?.boosts || a.boosts)
+				let a=M.allyList[id];
+				a.currentLevel.boosts = Main.Allies.getAllyBoosts(a.allyId,a.level,a.rarity.value);
+				if (a.currentLevel?.boosts) prod.boosts = (prod.boosts||[]).concat(a.currentLevel.boosts);
 			})
 			return prod
 		},
@@ -1804,6 +1805,7 @@ let Main = {
 			return ally
 		},
 
+		// id = stringed ally identifier
 		getAllyBoosts:(id,level,rarity)=>{
 			let r=0;
 			let boosts = [];
