@@ -175,7 +175,7 @@ let CityMap = {
 			return result;
 		}
 
-		let buildings = Object.values(CityMap[FH.ActiveMap].data).filter(x => x.state.next_state_transition_at !== undefined && x.type !== 'main_building' && x.state.pausedAt === undefined);
+		let buildings = Object.values(CityMap[FH.ActiveMap]?.data || {}).filter(x => x?.state?.next_state_transition_at !== undefined && x.type !== 'main_building' && x?.state?.pausedAt === undefined);
 		buildings = filterByTransitionTime(buildings);
 
 		FH.Alerts.getAll().then(existingAlerts => {
